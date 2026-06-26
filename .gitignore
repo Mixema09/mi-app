@@ -1,0 +1,18 @@
+# Variables de entorno locales (contienen secretos)
+.env.local
+.env*.local
+
+# Dependencias
+node_modules/
+
+# Builds
+.next/
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
