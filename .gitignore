@@ -1,0 +1,12 @@
+# Variables de entorno (secretos) — nunca subir al repositorio
+.env
+.env.local
+.env.*.local
+
+# Dependencias
+node_modules/
+
+# Builds
+.next/
+dist/
+build/
