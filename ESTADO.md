@@ -1,7 +1,7 @@
 # ESTADO — Reconecta AI
-Última actualización: 2026-07-12 | Sesión actual: 1
+Última actualización: 2026-07-12 | Sesión actual: 2
 
-⏸️ CHECKPOINT — Última acción completada: Constitución + Avatar + Arte preliminar + Plan Maestro presentados / Siguiente acción exacta: Esperar OK del usuario → iniciar Sesión 2 (scaffold Next.js + 3 opciones A/B/C a 375px)
+✅ CHECKPOINT — Sesión 2 COMPLETADA: scaffold Next.js 16 + tokens CSS + A/B/C aprobado (Opción A "Santuario") + componentes UI base creados manualmente (shadcn bloqueado por proxy) / Siguiente acción exacta: Sesión 3 → Landing page (10 secciones canónicas)
 
 ## Qué es esta app
 Reconecta AI: plataforma de sanación emocional de la relación con el dinero usando el Método RAÍZ™, IA conversacional con memoria y contenido personalizado. Para adultos de LATAM con bloqueos económicos de origen emocional. Modelo: Onboarding-first anónimo → paywall post-diagnóstico. $7.49/mes · $59.99/año.
@@ -82,13 +82,13 @@ Reconecta AI: plataforma de sanación emocional de la relación con el dinero us
 
 ## Sesiones completadas ✅
 - Sesión 1 — Validación de mercado + Constitución del Producto + Avatar + Monetización + Arquitectura — 2026-07-12
+- Sesión 2 — Scaffold Next.js 16 + Tailwind v4 + Google Fonts + tokens CSS + A/B/C (Opción A elegida) + FICHA-ARTE.md aprobada + componentes UI manuales (Button/Card/Input/Dialog/Skeleton) + lib/utils — 2026-07-12
 
 ## Sesión en progreso 🔧
-- Sesión 1 — Plan Maestro presentado, esperando OK del usuario para Sesión 2
+- Sesión 3 — Landing page (10 secciones canónicas)
 
 ## Próximas sesiones 📋
-- Sesión 2: Identidad visual — scaffold Next.js + 3 opciones A/B/C a 375px + tokens CSS + FICHA-ARTE.md aprobada
-- Sesión 3: Página de ventas — 10 secciones canónicas, copy desde FICHA-AVATAR.md
+- Sesión 3 (SIGUIENTE): Página de ventas — 10 secciones canónicas, copy desde FICHA-AVATAR.md
 - Sesión 4: Onboarding diagnóstico + paywall + login
 - Sesión 5: App interna — dashboard + chat IA + ruta personalizada + gamificación
 - Sesión 6: Integraciones — Supabase + Claude API + Hotmart + Vercel + Resend + dominio
@@ -96,7 +96,7 @@ Reconecta AI: plataforma de sanación emocional de la relación con el dinero us
 - Sesión 8: Adquisición (afiliados Hotmart + IG) + lanzamiento + backoffice
 
 ## Problemas conocidos ⚠️
-- Ninguno
+- shadcn/ui init bloqueado por proxy (ui.shadcn.com rechazado) — resuelto: componentes creados manualmente con Radix UI + CVA + los mismos tokens de la app; funcionalidad idéntica
 
 ## Pendientes del usuario (SOLO tú puedes hacer esto)
 - [ ] Crear cuenta en Hotmart — Sesión 6 (te guío clic a clic cuando lleguemos)
