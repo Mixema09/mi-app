@@ -437,24 +437,24 @@ export default function LandingPage() {
     {
       day: "DÍAS 1-2",
       label: "La conexión que nadie había hecho",
-      desc: "La mayoría describe el mismo momento: entender por primera vez que no es falta de disciplina — que hay un origen emocional exacto detrás del patrón. Algo hace clic.",
+      desc: "Vas a notar el momento exacto: entender que no es falta de disciplina — que hay un origen emocional detrás del patrón. Algo hace clic y ya no puedes no verlo.",
     },
     {
       day: "DÍAS 3-5",
-      label: "El ejercicio que incomoda",
-      desc: "El que pregunta qué sentías a los 8 años cuando no había dinero en casa. Algunas lloran. No de tristeza — de reconocimiento. Hacía años que nadie hacía esa pregunta.",
+      label: "El ejercicio que más incomoda",
+      desc: "El que te pregunta qué sentías a los 8 años cuando no había dinero en casa. Es incómodo porque toca algo real. Y esa incomodidad es exactamente donde está la raíz.",
     },
     {
       day: "SEMANA 2",
       label: "La claridad",
-      desc: "Ver el autoboicot con nombre y apellido. Por primera vez, no con culpa — con comprensión. Y saber exactamente por dónde empieza el cambio real.",
+      desc: "Vas a ver el autoboicot con nombre y apellido. Por primera vez, no con culpa — con comprensión. Y vas a saber exactamente por dónde empieza el cambio real.",
     },
   ];
 
   const valueItems = [
-    { label: "Diagnóstico Emocional del Dinero™", value: "$97" },
-    { label: "Chat IA con memoria completa", value: "$67" },
-    { label: "Ruta personalizada + ejercicio diario", value: "$120" },
+    { label: "Diagnóstico Emocional del Dinero™", value: "$97", note: "≈ 1 sesión de psicología" },
+    { label: "Chat IA con memoria completa", value: "$67", note: undefined as string | undefined },
+    { label: "Ruta personalizada + ejercicio diario", value: "$120", note: undefined as string | undefined },
   ];
 
   const faqs = [
@@ -872,19 +872,31 @@ export default function LandingPage() {
 
         <div className="mx-auto mt-8 max-w-sm px-4">
           <Reveal>
-            <Link href="/onboarding" className="block">
+            <Link href="/onboarding" className="block" onClick={() => setIsPending(true)}>
               <motion.button
-                whileTap={{ scale: 0.97 }}
+                whileTap={isPending ? undefined : { scale: 0.97 }}
+                disabled={isPending}
                 className="flex w-full items-center justify-center gap-2 rounded-full border-2 py-4 text-sm font-semibold"
                 style={{
                   borderColor: "var(--brand-primary)",
                   color: "var(--brand-primary)",
                   background: "transparent",
                   transition: "transform 100ms",
+                  pointerEvents: isPending ? "none" : "auto",
+                  opacity: isPending ? 0.75 : 1,
                 }}
               >
-                Empezar gratis — sin tarjeta
-                <ArrowRight weight="bold" size={16} />
+                {isPending ? (
+                  <>
+                    <SpinnerGap weight="bold" size={16} className="animate-spin" />
+                    Preparando...
+                  </>
+                ) : (
+                  <>
+                    Empezar gratis — sin tarjeta
+                    <ArrowRight weight="bold" size={16} />
+                  </>
+                )}
               </motion.button>
             </Link>
           </Reveal>
@@ -926,10 +938,17 @@ export default function LandingPage() {
                         : "none",
                   }}
                 >
-                  <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                    {item.label}
-                  </span>
-                  <span className="text-sm font-semibold line-through" style={{ color: "var(--text-muted)" }}>
+                  <div className="flex flex-col">
+                    <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                      {item.label}
+                    </span>
+                    {item.note && (
+                      <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                        {item.note}
+                      </span>
+                    )}
+                  </div>
+                  <span className="ml-4 shrink-0 text-sm font-semibold line-through" style={{ color: "var(--text-muted)" }}>
                     {item.value}
                   </span>
                 </div>
@@ -984,10 +1003,10 @@ export default function LandingPage() {
                 {billing === "annual" && (
                   <motion.div
                     key="annual-badge"
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.2 }}
+                    initial={{ opacity: 0, scale: 0.6 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.6 }}
+                    transition={{ opacity: { duration: 0.2 }, scale: { type: "spring", stiffness: 300, damping: 12 } }}
                     className="mb-3 inline-block rounded-full px-3 py-1 text-xs font-semibold"
                     style={{ background: "var(--brand-gold-light)", color: "var(--brand-gold)" }}
                   >
@@ -1164,7 +1183,7 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────── */}
       {/* §8  FAQ                                            */}
       {/* ──────────────────────────────────────────────────── */}
-      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
+      <section className="px-4 py-16" style={{ background: "var(--surface-base)" }}>
         <div className="mx-auto max-w-sm">
           <Reveal>
             <Kicker>Preguntas frecuentes</Kicker>
@@ -1275,19 +1294,31 @@ export default function LandingPage() {
           </Reveal>
 
           <Reveal delay={0.14}>
-            <Link href="/onboarding" className="block">
+            <Link href="/onboarding" className="block" onClick={() => setIsPending(true)}>
               <motion.button
-                whileTap={{ scale: 0.97 }}
+                whileTap={isPending ? undefined : { scale: 0.97 }}
+                disabled={isPending}
                 className="mt-8 flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
                 style={{
                   background: "var(--brand-primary)",
                   color: "var(--surface-elevated)",
                   boxShadow: "0 4px 22px rgba(224,123,64,0.48)",
                   transition: "transform 100ms",
+                  pointerEvents: isPending ? "none" : "auto",
+                  opacity: isPending ? 0.85 : 1,
                 }}
               >
-                Descubrir mi herida del dinero
-                <ArrowRight weight="bold" size={18} />
+                {isPending ? (
+                  <>
+                    <SpinnerGap weight="bold" size={18} className="animate-spin" />
+                    Preparando tu diagnóstico...
+                  </>
+                ) : (
+                  <>
+                    Descubrir mi herida del dinero
+                    <ArrowRight weight="bold" size={18} />
+                  </>
+                )}
               </motion.button>
             </Link>
             <p
@@ -1378,19 +1409,31 @@ export default function LandingPage() {
                 paddingBottom: "max(16px, env(safe-area-inset-bottom))",
               }}
             >
-              <Link href="/onboarding" className="block">
+              <Link href="/onboarding" className="block" onClick={() => setIsPending(true)}>
                 <motion.button
-                  whileTap={{ scale: 0.97 }}
+                  whileTap={isPending ? undefined : { scale: 0.97 }}
+                  disabled={isPending}
                   className="flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-sm font-semibold"
                   style={{
                     background: "var(--brand-primary)",
                     color: "var(--surface-elevated)",
                     boxShadow: "0 4px 12px rgba(224,123,64,0.30)",
                     transition: "transform 100ms",
+                    pointerEvents: isPending ? "none" : "auto",
+                    opacity: isPending ? 0.85 : 1,
                   }}
                 >
-                  Descubrir mi herida del dinero
-                  <ArrowRight weight="bold" size={16} />
+                  {isPending ? (
+                    <>
+                      <SpinnerGap weight="bold" size={16} className="animate-spin" />
+                      Preparando...
+                    </>
+                  ) : (
+                    <>
+                      Descubrir mi herida del dinero
+                      <ArrowRight weight="bold" size={16} />
+                    </>
+                  )}
                 </motion.button>
               </Link>
             </div>
