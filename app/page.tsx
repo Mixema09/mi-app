@@ -12,6 +12,7 @@ import {
   CurrencyDollar,
   Star,
   ArrowRight,
+  SpinnerGap,
 } from "@phosphor-icons/react";
 
 // ─── Animated number helpers ───────────────────────────────
@@ -359,6 +360,7 @@ export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showSticky, setShowSticky] = useState(false);
   const [activeScreen, setActiveScreen] = useState(0);
+  const [isPending, setIsPending] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -431,21 +433,21 @@ export default function LandingPage() {
     { label: "Ejercicio Diario", sub: "5 minutos de profundidad", Screen: EjercicioScreen },
   ];
 
-  const testimonials = [
+  const milestones = [
     {
-      quote: "Siempre pensé que mi problema era la disciplina. En la primera sesión entendí que era miedo — miedo a que si me iba bien, algo malo pasaría. Nunca lo había conectado así.",
-      name: "Valentina R.",
-      country: "Colombia",
+      day: "DÍAS 1-2",
+      label: "La conexión que nadie había hecho",
+      desc: "La mayoría describe el mismo momento: entender por primera vez que no es falta de disciplina — que hay un origen emocional exacto detrás del patrón. Algo hace clic.",
     },
     {
-      quote: "Llevo 10 años ganando buen dinero y siempre llegando a cero. Reconecta AI me hizo ver que me saboteo exactamente cuando las cosas empiezan a funcionar. Es incómodo, pero necesitaba saberlo.",
-      name: "Mariana T.",
-      country: "México",
+      day: "DÍAS 3-5",
+      label: "El ejercicio que incomoda",
+      desc: "El que pregunta qué sentías a los 8 años cuando no había dinero en casa. Algunas lloran. No de tristeza — de reconocimiento. Hacía años que nadie hacía esa pregunta.",
     },
     {
-      quote: "La parte que más me sorprendió fue el ejercicio del día 2. Lloré. No por tristeza — por reconocimiento. Hacía años que nadie me preguntaba qué sentía a los 8 años cuando no había dinero en casa.",
-      name: "Sofía L.",
-      country: "Argentina",
+      day: "SEMANA 2",
+      label: "La claridad",
+      desc: "Ver el autoboicot con nombre y apellido. Por primera vez, no con culpa — con comprensión. Y saber exactamente por dónde empieza el cambio real.",
     },
   ];
 
@@ -529,19 +531,31 @@ export default function LandingPage() {
 
           <HeroReveal delay={0.14}>
             <div id="hero-cta-sentinel" ref={sentinelRef} className="mt-8">
-              <Link href="/onboarding" className="block">
+              <Link href="/onboarding" className="block" onClick={() => setIsPending(true)}>
                 <motion.button
-                  whileTap={{ scale: 0.97 }}
+                  whileTap={isPending ? undefined : { scale: 0.97 }}
+                  disabled={isPending}
                   className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
                   style={{
                     background: "var(--brand-primary)",
                     color: "var(--surface-elevated)",
                     boxShadow: "0 4px 18px rgba(224,123,64,0.38)",
                     transition: "transform 100ms, box-shadow 200ms",
+                    pointerEvents: isPending ? "none" : "auto",
+                    opacity: isPending ? 0.85 : 1,
                   }}
                 >
-                  Descubrir mi herida del dinero
-                  <ArrowRight weight="bold" size={18} />
+                  {isPending ? (
+                    <>
+                      <SpinnerGap weight="bold" size={18} className="animate-spin" />
+                      Preparando tu diagnóstico...
+                    </>
+                  ) : (
+                    <>
+                      Descubrir mi herida del dinero
+                      <ArrowRight weight="bold" size={18} />
+                    </>
+                  )}
                 </motion.button>
               </Link>
               <p className="mt-3 text-center text-xs" style={{ color: "var(--text-muted)" }}>
@@ -555,7 +569,7 @@ export default function LandingPage() {
             <div
               className="mx-auto mt-10 overflow-hidden"
               style={{
-                width: "190px",
+                width: "235px",
                 aspectRatio: "9 / 16",
                 borderRadius: "var(--radius-lg)",
                 boxShadow: "var(--shadow-lg), 0 0 0 1.5px color-mix(in oklab, var(--brand-primary) 20%, transparent)",
@@ -596,8 +610,9 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────── */}
       {/* §2  PROBLEMA                                        */}
       {/* ──────────────────────────────────────────────────── */}
-      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
-        <div className="mx-auto max-w-sm">
+      <section className="relative overflow-hidden px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
+        <Blob style={{ right: "-20%", top: "-15%", width: "300px", height: "300px", opacity: 0.35 }} />
+        <div className="relative mx-auto max-w-sm">
           <Reveal>
             <Kicker>¿Te identificas?</Kicker>
           </Reveal>
@@ -723,8 +738,9 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────── */}
       {/* §4  SOLUCIÓN — MÉTODO RAÍZ™                        */}
       {/* ──────────────────────────────────────────────────── */}
-      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
-        <div className="mx-auto max-w-sm">
+      <section className="relative overflow-hidden px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
+        <Blob color="gold" style={{ left: "-15%", bottom: "-10%", width: "280px", height: "280px", opacity: 0.30 }} />
+        <div className="relative mx-auto max-w-sm">
           <Reveal>
             <Kicker>Método RAÍZ™</Kicker>
           </Reveal>
@@ -1028,7 +1044,7 @@ export default function LandingPage() {
                     transition: "transform 100ms",
                   }}
                 >
-                  Empezar gratis — sin tarjeta
+                  Descubrir mi herida del dinero
                   <ArrowRight weight="bold" size={18} />
                 </motion.button>
               </Link>
@@ -1093,24 +1109,24 @@ export default function LandingPage() {
       </section>
 
       {/* ──────────────────────────────────────────────────── */}
-      {/* §7B TESTIMONIOS                                    */}
+      {/* §7B HITOS DEL PROCESO                             */}
       {/* ──────────────────────────────────────────────────── */}
       <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
         <div className="mx-auto max-w-sm">
           <Reveal>
-            <Kicker>Voces reales</Kicker>
+            <Kicker>Lo que sentirás en los primeros días</Kicker>
           </Reveal>
           <Reveal delay={0.05}>
             <h2
               className="mt-4 font-display text-2xl font-bold leading-snug"
               style={{ color: "var(--text-primary)" }}
             >
-              Lo que cambia cuando llegas a la raíz
+              El camino que la mayoría no esperaba recorrer
             </h2>
           </Reveal>
 
           <div className="mt-8 flex flex-col gap-4">
-            {testimonials.map((t, i) => (
+            {milestones.map((m, i) => (
               <Reveal key={i} delay={i * 0.07}>
                 <div
                   className="rounded-[var(--radius-md)] p-5"
@@ -1120,24 +1136,24 @@ export default function LandingPage() {
                     borderLeft: "3px solid var(--brand-primary)",
                   }}
                 >
-                  <p
-                    className="text-sm leading-relaxed"
-                    style={{ color: "var(--text-secondary)", fontStyle: "italic" }}
+                  <span
+                    className="text-xs font-semibold uppercase tracking-widest"
+                    style={{ color: "var(--brand-primary)" }}
                   >
-                    "{t.quote}"
+                    {m.day}
+                  </span>
+                  <p
+                    className="mt-1 text-sm font-semibold"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    {m.label}
                   </p>
-                  <div className="mt-3 flex items-center gap-2">
-                    <div
-                      className="flex size-7 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold"
-                      style={{ background: "color-mix(in oklab, var(--brand-primary) 12%, transparent)", color: "var(--brand-primary)" }}
-                    >
-                      {t.name[0]}
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>{t.name}</p>
-                      <p className="text-xs" style={{ color: "var(--text-muted)" }}>{t.country}</p>
-                    </div>
-                  </div>
+                  <p
+                    className="mt-2 text-sm leading-relaxed"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    {m.desc}
+                  </p>
                 </div>
               </Reveal>
             ))}
