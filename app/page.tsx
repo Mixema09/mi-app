@@ -1,65 +1,1065 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence, useInView } from "motion/react";
+import Link from "next/link";
+import {
+  Heart,
+  Wallet,
+  Brain,
+  CaretDown,
+  SealCheck,
+  CurrencyDollar,
+  Star,
+  ArrowRight,
+  MagnifyingGlass,
+  Eye,
+  Pencil,
+  ChatCircle,
+  Path,
+} from "@phosphor-icons/react";
+
+// ─── Primitives ────────────────────────────────────────────
+
+function Reveal({
+  children,
+  delay = 0,
+  className,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-8%" });
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 24 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function Kicker({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      className="inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-widest"
+      style={{
+        background: "var(--brand-primary-light)",
+        borderColor: "color-mix(in oklab, var(--brand-primary) 30%, transparent)",
+        color: "var(--brand-primary)",
+        fontFamily: "var(--font-body)",
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+function CustomCheck() {
+  return (
+    <div
+      className="flex size-5 shrink-0 items-center justify-center rounded-full"
+      style={{ background: "color-mix(in oklab, var(--brand-primary) 12%, transparent)" }}
+    >
+      <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+        <path
+          d="M1 4L3.5 6.5L9 1"
+          stroke="var(--brand-primary)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+      </svg>
+    </div>
+  );
+}
+
+// Blob: all positioning via inline style (decorative — no scale constraint)
+function Blob({
+  color = "primary",
+  style,
+}: {
+  color?: "primary" | "gold";
+  style?: React.CSSProperties;
+}) {
+  return (
+    <div
+      className="pointer-events-none absolute"
+      style={{
+        background:
+          color === "gold"
+            ? "radial-gradient(ellipse at 50% 50%, rgba(201,149,26,0.25) 0%, rgba(224,123,64,0.12) 50%, transparent 70%)"
+            : "radial-gradient(ellipse at 50% 50%, rgba(224,123,64,0.22) 0%, rgba(201,149,26,0.10) 50%, transparent 70%)",
+        borderRadius: "60% 40% 70% 30% / 50% 60% 40% 70%",
+        filter: "blur(8px)",
+        ...style,
+      }}
+    />
+  );
+}
+
+// Soft-3D icon container — icons inherit color: surface-elevated
+function Soft3DIcon({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="flex size-11 shrink-0 items-center justify-center rounded-2xl"
+      style={{
+        background: "var(--soft3d-bg)",
+        boxShadow: "var(--soft3d-shadow)",
+        color: "var(--surface-elevated)",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function Soft3DIconLg({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="flex size-16 shrink-0 items-center justify-center rounded-2xl"
+      style={{
+        background: "var(--soft3d-bg)",
+        boxShadow: "var(--soft3d-shadow-lg)",
+        color: "var(--surface-elevated)",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+// ─── Landing Page ──────────────────────────────────────────
+
+export default function LandingPage() {
+  const [billing, setBilling] = useState<"annual" | "monthly">("annual");
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [showSticky, setShowSticky] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setShowSticky(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const painPoints = [
+    {
+      icon: <Wallet weight="duotone" size={22} />,
+      text: "Trabajo mucho, pero el dinero siempre se va antes de la próxima quincena.",
+    },
+    {
+      icon: <Brain weight="duotone" size={22} />,
+      text: "Sé lo que debería hacer con el dinero, pero algo me paraliza cuando intento hacerlo.",
+    },
+    {
+      icon: <Heart weight="duotone" size={22} />,
+      text: "Siento culpa cuando gasto en mí. Como si no mereciera que el dinero me alcance.",
+    },
+    {
+      icon: <CurrencyDollar weight="duotone" size={22} />,
+      text: "He leído libros, hecho cursos, intentado presupuestos — el patrón siempre regresa.",
+    },
+  ];
+
+  const raizSteps = [
+    {
+      letter: "R",
+      title: "Revelar la herida de origen",
+      desc: "La IA analiza tu historia y encuentra el momento exacto donde se formó la creencia que hoy te limita.",
+    },
+    {
+      letter: "A",
+      title: "Acompañar el proceso emocional",
+      desc: "Ejercicios de 5 minutos diarios para sanar la herida con la parte de ti que tomó esa decisión de supervivencia.",
+    },
+    {
+      letter: "Í",
+      title: "Integrar la nueva narrativa",
+      desc: "Reescribes tu relato con el dinero desde tu yo adulto — desde la merecida abundancia, no desde el miedo.",
+    },
+    {
+      letter: "Z",
+      title: "Zona de merecimiento activo",
+      desc: "Tu Perfil Emocional™ se enriquece con cada sesión. La IA recuerda tu historia y adapta tu camino exacto.",
+    },
+  ];
+
+  const screens = [
+    { label: "Diagnóstico", sub: "Descubre tu herida raíz", icon: <MagnifyingGlass weight="duotone" size={28} /> },
+    { label: "Perfil Emocional™", sub: "Tu mapa del dinero", icon: <Eye weight="duotone" size={28} /> },
+    { label: "Ruta Personalizada", sub: "Tu camino de sanación", icon: <Path weight="duotone" size={28} /> },
+    { label: "Ejercicio Diario", sub: "5 minutos de profundidad", icon: <ChatCircle weight="duotone" size={28} /> },
+  ];
+
+  const valueItems = [
+    { label: "Diagnóstico Emocional del Dinero™", value: "$97" },
+    { label: "Chat IA con memoria completa", value: "$67" },
+    { label: "Ruta personalizada + ejercicio diario", value: "$120" },
+  ];
+
+  const faqs = [
+    {
+      q: "¿Esto realmente funciona si llevo años con el mismo patrón?",
+      a: "Sí — de hecho, la duración del patrón confirma que tiene raíz emocional. Reconecta AI trabaja desde la causa, no desde el síntoma. No intenta convencerte de que 'pienses positivo'; te acompaña a entender por qué el dinero activa en ti lo que activa — y desde ahí, el cambio es real.",
+    },
+    {
+      q: "¿En qué es diferente a terapia o a un libro de autoayuda?",
+      a: "La terapia tradicional es excelente pero cara y lenta. Los libros no te conocen. Reconecta AI combina estructura terapéutica + personalización real. La IA recuerda cada sesión, adapta tu ruta y está disponible a las 3am cuando el dinero no te deja dormir.",
+    },
+    {
+      q: "¿Necesito tiempo libre o hacer ejercicios largos?",
+      a: "No. Cada sesión dura 5 minutos. Diseñado para gente ocupada: un check-in rápido, un ejercicio concreto, una revelación. La constancia de 5 minutos diarios produce más cambio que una sesión mensual de 2 horas.",
+    },
+    {
+      q: "¿Lo que comparto en la app está seguro?",
+      a: "Totalmente. Tus respuestas y conversaciones son privadas y nunca se comparten con terceros. Usamos cifrado estándar bancario. Puedes leer nuestra política completa en el pie de página — sin letra pequeña.",
+    },
+    {
+      q: "¿Qué pasa si pruebo y no me convence?",
+      a: "Tienes 14 días de garantía completa. Si después de tu Primera Revelación sientes que no fue para ti, te regresamos el dinero sin preguntas. Confiamos en que lo que descubras en los primeros minutos ya va a valer el intento.",
+    },
+  ];
+
+  return (
+    <div className="min-h-dvh" style={{ background: "var(--surface-base)", color: "var(--text-primary)" }}>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §1  HERO                                           */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden px-4 pb-16 pt-10">
+        <Blob style={{ left: "-20%", top: "-10%", width: "480px", height: "480px", opacity: 0.7 }} />
+        <Blob color="gold" style={{ right: "-15%", bottom: "5%", width: "300px", height: "300px", opacity: 0.5 }} />
+
+        <div className="relative mx-auto max-w-sm">
+          {/* Nav */}
+          <div className="mb-10 flex items-center justify-between">
+            <span className="font-display text-lg font-semibold">
+              Reconecta<span style={{ color: "var(--brand-primary)" }}>AI</span>
+            </span>
+            <Link href="/login" className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
+              Iniciar sesión
+            </Link>
+          </div>
+
+          <Reveal>
+            <Kicker>Método RAÍZ™ · Solo en español</Kicker>
+          </Reveal>
+
+          <Reveal delay={0.06}>
+            <h1
+              className="mt-4 font-display font-bold leading-[1.12] tracking-tight"
+              style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", color: "var(--text-primary)" }}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              La herida no está{" "}
+              <em className="not-italic" style={{ color: "var(--brand-primary)" }}>
+                en&nbsp;tu bolsillo
+              </em>
+            </h1>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <p className="mt-4 text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+              Millones en LATAM trabajan duro, pero el dinero siempre se va. No es disciplina lo
+              que falta — es sanar la raíz emocional que bloquea tu abundancia.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.14}>
+            <div id="hero-cta-sentinel" ref={sentinelRef} className="mt-8">
+              <Link href="/onboarding" className="block">
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+                  style={{
+                    background: "var(--brand-primary)",
+                    color: "var(--surface-elevated)",
+                    boxShadow: "0 4px 18px rgba(224,123,64,0.38)",
+                    transition: "transform 100ms, box-shadow 200ms",
+                  }}
+                >
+                  Descubrir mi herida del dinero
+                  <ArrowRight weight="bold" size={18} />
+                </motion.button>
+              </Link>
+              <p className="mt-3 text-center text-xs" style={{ color: "var(--text-muted)" }}>
+                Gratis · 5 minutos · Sin tarjeta
+              </p>
+            </div>
+          </Reveal>
+
+          {/* 9:16 app visual placeholder */}
+          <Reveal delay={0.18}>
+            <div
+              className="mx-auto mt-10 flex flex-col items-center justify-center gap-3 rounded-[var(--radius-lg)] border-2 border-dashed p-8"
+              style={{
+                width: "200px",
+                aspectRatio: "9 / 16",
+                borderColor: "color-mix(in oklab, var(--brand-primary) 28%, transparent)",
+                background: "color-mix(in oklab, var(--brand-primary) 4%, var(--surface-elevated))",
+              }}
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <div
+                className="flex size-14 items-center justify-center rounded-2xl"
+                style={{
+                  background: "var(--soft3d-bg)",
+                  boxShadow: "var(--soft3d-shadow-lg)",
+                  color: "var(--surface-elevated)",
+                }}
+              >
+                <Heart weight="duotone" size={28} />
+              </div>
+              <div className="text-center">
+                <p className="text-xs font-semibold" style={{ color: "var(--brand-primary)" }}>
+                  App preview
+                </p>
+                <p className="mt-0.5 text-xs" style={{ color: "var(--text-muted)" }}>
+                  próximamente
+                </p>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Trust strip */}
+          <Reveal delay={0.22}>
+            <div className="mt-10 flex items-start justify-center">
+              {[
+                { n: "4.9★", label: "valoración" },
+                { n: "Español", label: "LATAM" },
+                { n: "7 días", label: "trial gratis" },
+              ].map((item, i) => (
+                <div
+                  key={item.n}
+                  className="flex flex-col items-center gap-0.5 px-5"
+                  style={{
+                    borderLeft: i > 0 ? "1px solid var(--border-subtle)" : "none",
+                  }}
+                >
+                  <span className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
+                    {item.n}
+                  </span>
+                  <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §2  PROBLEMA                                        */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
+        <div className="mx-auto max-w-sm">
+          <Reveal>
+            <Kicker>¿Te identificas?</Kicker>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2
+              className="mt-4 font-display text-2xl font-bold leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
+              No estás sola. Millones sienten exactamente esto
+            </h2>
+          </Reveal>
+
+          <div className="mt-8 flex flex-col gap-4">
+            {painPoints.map((item, i) => (
+              <Reveal key={i} delay={i * 0.07}>
+                <div
+                  className="flex gap-4 rounded-[var(--radius-md)] p-4"
+                  style={{ background: "var(--surface-sunken)", boxShadow: "var(--shadow-sm)" }}
+                >
+                  <Soft3DIcon>{item.icon}</Soft3DIcon>
+                  <p className="self-center text-sm leading-relaxed" style={{ color: "var(--text-primary)" }}>
+                    {item.text}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §3  AGITACIÓN                                       */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section className="px-4 py-16">
+        <div className="mx-auto max-w-sm">
+          <Reveal>
+            <Kicker>El costo real del patrón</Kicker>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2
+              className="mt-4 font-display text-2xl font-bold leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Cada año que el patrón sigue,
+              <br />
+              te cuesta más de lo que crees
+            </h2>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <div
+              className="mt-8 rounded-[var(--radius-lg)] p-6"
+              style={{ background: "var(--surface-elevated)", boxShadow: "var(--shadow-lg)" }}
+            >
+              <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                Costo estimado del patrón emocional sin resolver
+              </p>
+              <div className="mt-2 flex items-end gap-1">
+                <span className="font-display text-4xl font-bold" style={{ color: "var(--brand-primary)" }}>
+                  $9,600
+                </span>
+                <span className="mb-1 text-sm" style={{ color: "var(--text-secondary)" }}>
+                  &nbsp;/ año
+                </span>
+              </div>
+              <p className="mt-1 text-xs" style={{ color: "var(--text-muted)" }}>
+                En oportunidades perdidas, decisiones por miedo y autoboicot
+              </p>
+
+              <div className="mt-6 flex flex-col gap-3">
+                {[
+                  "Rechazas aumentos de sueldo por sentirte insuficiente",
+                  "Gastas impulsivamente para aliviar la ansiedad financiera",
+                  "Evitas revisar tus cuentas porque genera angustia",
+                  "Saboteas proyectos justo cuando empiezan a funcionar",
+                ].map((text, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div
+                      className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                      style={{
+                        background: "color-mix(in oklab, var(--text-secondary) 25%, transparent)",
+                        color: "var(--text-secondary)",
+                      }}
+                    >
+                      ×
+                    </div>
+                    <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.15}>
+            <p
+              className="mt-6 text-center text-base font-medium leading-relaxed"
+              style={{ color: "var(--text-primary)" }}
+            >
+              No es mala suerte. No es falta de disciplina.{" "}
+              <strong style={{ color: "var(--brand-primary)" }}>
+                Es una herida emocional que nadie te enseñó a sanar.
+              </strong>
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §4  SOLUCIÓN — MÉTODO RAÍZ™                        */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
+        <div className="mx-auto max-w-sm">
+          <Reveal>
+            <Kicker>Método RAÍZ™</Kicker>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2
+              className="mt-4 font-display text-2xl font-bold leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
+              La primera IA diseñada para sanar tu relación con el dinero desde la raíz
+            </h2>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+              No es otro curso de finanzas. No es positivismo vacío. Es un proceso terapéutico
+              personalizado que trabaja donde el dinero realmente vive: en tu historia emocional.
+            </p>
+          </Reveal>
+
+          <div className="mt-8 flex flex-col">
+            {raizSteps.map((step, i) => (
+              <Reveal key={i} delay={i * 0.08}>
+                <div className="flex gap-4">
+                  <div className="flex shrink-0 flex-col items-center">
+                    <div
+                      className="flex size-10 items-center justify-center rounded-full font-display text-lg font-bold"
+                      style={{
+                        background: "var(--soft3d-bg)",
+                        boxShadow: "var(--soft3d-shadow)",
+                        color: "var(--surface-elevated)",
+                      }}
+                    >
+                      {step.letter}
+                    </div>
+                    {i < raizSteps.length - 1 && (
+                      <div
+                        className="my-1 w-px flex-1"
+                        style={{
+                          minHeight: "28px",
+                          background: "color-mix(in oklab, var(--brand-primary) 20%, transparent)",
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div className="pb-6 pt-1">
+                    <h3 className="font-display text-base font-semibold" style={{ color: "var(--text-primary)" }}>
+                      {step.title}
+                    </h3>
+                    <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                      {step.desc}
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §5  CARRUSEL DE PANTALLAS                          */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section className="overflow-hidden py-16">
+        <div className="mx-auto max-w-sm px-4">
+          <Reveal>
+            <Kicker>Así se ve por dentro</Kicker>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2
+              className="mt-4 font-display text-2xl font-bold leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Cada sesión te lleva un paso más lejos del patrón
+            </h2>
+          </Reveal>
+        </div>
+
+        <Reveal delay={0.1}>
+          <div
+            className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {screens.map((screen, i) => (
+              <div
+                key={i}
+                className="w-48 shrink-0 snap-center"
+              >
+                <div
+                  className="flex h-full flex-col items-center justify-center gap-4 rounded-[var(--radius-lg)] border-2 border-dashed p-6"
+                  style={{
+                    aspectRatio: "9 / 16",
+                    borderColor: "color-mix(in oklab, var(--brand-primary) 25%, transparent)",
+                    background: "color-mix(in oklab, var(--brand-primary) 4%, var(--surface-elevated))",
+                  }}
+                >
+                  <Soft3DIconLg>{screen.icon}</Soft3DIconLg>
+                  <div className="text-center">
+                    <p className="font-display text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                      {screen.label}
+                    </p>
+                    <p className="mt-1 text-xs" style={{ color: "var(--text-muted)" }}>
+                      {screen.sub}
+                    </p>
+                  </div>
+                  <div
+                    className="rounded-full px-3 py-1 text-xs font-medium"
+                    style={{ background: "var(--brand-primary-light)", color: "var(--brand-primary)" }}
+                  >
+                    Próximamente
+                  </div>
+                </div>
+              </div>
+            ))}
+            <div className="w-4 shrink-0" />
+          </div>
+        </Reveal>
+
+        <div className="mx-auto mt-8 max-w-sm px-4">
+          <Reveal>
+            <Link href="/onboarding" className="block">
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                className="flex w-full items-center justify-center gap-2 rounded-full border-2 py-4 text-sm font-semibold"
+                style={{
+                  borderColor: "var(--brand-primary)",
+                  color: "var(--brand-primary)",
+                  background: "transparent",
+                  transition: "transform 100ms",
+                }}
+              >
+                Quiero empezar mi diagnóstico gratis
+                <ArrowRight weight="bold" size={16} />
+              </motion.button>
+            </Link>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §6  OFERTA / PRICING                               */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
+        <div className="mx-auto max-w-sm">
+          <Reveal>
+            <Kicker>Inversión en ti</Kicker>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2
+              className="mt-4 font-display text-2xl font-bold leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Todo lo que necesitas para sanar tu relación con el dinero
+            </h2>
+          </Reveal>
+
+          {/* Value stack */}
+          <Reveal delay={0.08}>
+            <div className="mt-6 rounded-[var(--radius-md)] p-5" style={{ background: "var(--surface-sunken)" }}>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                Valor incluido
+              </p>
+              {valueItems.map((item, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between py-2"
+                  style={{
+                    borderBottom:
+                      i < valueItems.length - 1
+                        ? "1px solid color-mix(in oklab, var(--text-muted) 18%, transparent)"
+                        : "none",
+                  }}
+                >
+                  <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                    {item.label}
+                  </span>
+                  <span className="text-sm font-semibold line-through" style={{ color: "var(--text-muted)" }}>
+                    {item.value}
+                  </span>
+                </div>
+              ))}
+              <div
+                className="mt-1 flex items-center justify-between border-t pt-3"
+                style={{ borderColor: "color-mix(in oklab, var(--text-muted) 18%, transparent)" }}
+              >
+                <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                  Valor total
+                </span>
+                <span className="font-display text-lg font-bold line-through" style={{ color: "var(--text-muted)" }}>
+                  $284
+                </span>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Billing toggle */}
+          <Reveal delay={0.11}>
+            <div className="mt-6 flex rounded-full p-1" style={{ background: "var(--surface-sunken)" }}>
+              {(["annual", "monthly"] as const).map((plan) => (
+                <button
+                  key={plan}
+                  onClick={() => setBilling(plan)}
+                  className="flex-1 rounded-full py-2 text-sm font-medium"
+                  style={{
+                    background: billing === plan ? "var(--brand-primary)" : "transparent",
+                    color: billing === plan ? "var(--surface-elevated)" : "var(--text-muted)",
+                    transition: "background-color 200ms, color 200ms",
+                  }}
+                >
+                  {plan === "annual" ? "Anual · 4 meses gratis" : "Mensual"}
+                </button>
+              ))}
+            </div>
+          </Reveal>
+
+          {/* Price card */}
+          <Reveal delay={0.14}>
+            <div
+              className="mt-4 rounded-[var(--radius-lg)] p-6"
+              style={{
+                background: "var(--surface-base)",
+                backgroundImage:
+                  "linear-gradient(var(--surface-base), var(--surface-base)) padding-box, linear-gradient(135deg, color-mix(in oklab, var(--brand-primary) 40%, transparent), transparent 60%) border-box",
+                border: "2px solid transparent",
+                boxShadow: "var(--shadow-lg)",
+              }}
+            >
+              <AnimatePresence mode="wait">
+                {billing === "annual" && (
+                  <motion.div
+                    key="annual-badge"
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2 }}
+                    className="mb-3 inline-block rounded-full px-3 py-1 text-xs font-semibold"
+                    style={{ background: "var(--brand-gold-light)", color: "var(--brand-gold)" }}
+                  >
+                    ✦ 4 meses gratis incluidos
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="flex items-end gap-1">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={billing}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2 }}
+                    className="font-display text-4xl font-bold"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    ${billing === "annual" ? "4.99" : "7.49"}
+                  </motion.span>
+                </AnimatePresence>
+                <span className="mb-1 text-sm" style={{ color: "var(--text-muted)" }}>/mes</span>
+              </div>
+
+              {billing === "annual" && (
+                <p className="mt-0.5 text-xs" style={{ color: "var(--text-muted)" }}>
+                  $59.99 al año · equivale a $4.99/mes
+                </p>
+              )}
+
+              <div className="mt-5 flex flex-col gap-2.5">
+                {[
+                  "7 días de prueba completa sin cargo",
+                  "Cancela cuando quieras, sin penalización",
+                  "Soporte en español, siempre",
+                ].map((text, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <CustomCheck />
+                    <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Link href="/onboarding" className="block">
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+                  style={{
+                    background: "var(--brand-primary)",
+                    color: "var(--surface-elevated)",
+                    boxShadow: "0 4px 16px rgba(224,123,64,0.38)",
+                    transition: "transform 100ms",
+                  }}
+                >
+                  Empezar mi diagnóstico gratis
+                  <ArrowRight weight="bold" size={18} />
+                </motion.button>
+              </Link>
+              <p className="mt-3 text-center text-xs" style={{ color: "var(--text-muted)" }}>
+                El cobro inicia al día 8 si decides quedarte
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §7  GARANTÍA                                       */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section className="px-4 py-16">
+        <div className="mx-auto max-w-sm">
+          <Reveal>
+            <div
+              className="rounded-[var(--radius-lg)] p-8 text-center"
+              style={{
+                background: "var(--surface-elevated)",
+                backgroundImage:
+                  "linear-gradient(var(--surface-elevated), var(--surface-elevated)) padding-box, linear-gradient(135deg, color-mix(in oklab, var(--brand-gold) 50%, transparent), transparent 60%) border-box",
+                border: "2px solid transparent",
+                boxShadow: "var(--shadow-lg)",
+              }}
+            >
+              <div
+                className="mx-auto flex size-16 items-center justify-center rounded-full"
+                style={{
+                  background: "var(--gold-bg)",
+                  boxShadow: "var(--gold-shadow)",
+                  color: "var(--surface-elevated)",
+                }}
+              >
+                <SealCheck weight="fill" size={32} />
+              </div>
+
+              <h3 className="mt-5 font-display text-xl font-bold" style={{ color: "var(--text-primary)" }}>
+                La Garantía de la Primera Revelación
+              </h3>
+
+              <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                Si en los primeros{" "}
+                <strong style={{ color: "var(--text-primary)" }}>14 días</strong> no tienes una
+                revelación genuina sobre tu relación con el dinero — algo que diga "esto soy yo
+                exactamente" — te regresamos cada centavo.{" "}
+                <strong style={{ color: "var(--text-primary)" }}>
+                  Sin preguntas. Sin formularios complicados.
+                </strong>
+              </p>
+
+              <p className="mt-4 text-sm font-medium" style={{ color: "var(--brand-primary)" }}>
+                Porque si no te conocemos, no merecemos tu dinero.
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §8  FAQ                                            */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
+        <div className="mx-auto max-w-sm">
+          <Reveal>
+            <Kicker>Preguntas frecuentes</Kicker>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2
+              className="mt-4 font-display text-2xl font-bold leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Todo lo que necesitas saber antes de empezar
+            </h2>
+          </Reveal>
+
+          <div className="mt-8 flex flex-col gap-2">
+            {faqs.map((faq, i) => (
+              <Reveal key={i} delay={i * 0.04}>
+                <div
+                  className="overflow-hidden rounded-[var(--radius-md)]"
+                  style={{ background: "var(--surface-base)", boxShadow: "var(--shadow-sm)" }}
+                >
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
+                  >
+                    <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+                      {faq.q}
+                    </span>
+                    <motion.div
+                      animate={{ rotate: openFaq === i ? 180 : 0 }}
+                      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                      className="shrink-0"
+                    >
+                      <CaretDown weight="bold" size={16} color="var(--text-muted)" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <p className="px-5 pb-5 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                          {faq.a}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §9  CTA FINAL                                      */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section
+        className="relative overflow-hidden px-4 py-20"
+        style={{ background: "var(--text-primary)" }}
+      >
+        <Blob color="gold" style={{ left: "-10%", top: "-20%", width: "400px", height: "400px", opacity: 0.25 }} />
+        <Blob style={{ right: "-10%", bottom: "-10%", width: "300px", height: "300px", opacity: 0.15 }} />
+
+        <div className="relative mx-auto max-w-sm text-center">
+          <Reveal>
+            <div
+              className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full px-4 py-2"
+              style={{
+                background: "color-mix(in oklab, var(--brand-gold) 15%, transparent)",
+                border: "1px solid color-mix(in oklab, var(--brand-gold) 30%, transparent)",
+              }}
+            >
+              <Star weight="fill" size={13} color="var(--brand-gold)" />
+              <span className="text-xs font-semibold" style={{ color: "var(--brand-gold)" }}>
+                Más de 1,000 personas en LATAM ya están en camino
+              </span>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.06}>
+            <h2
+              className="font-display font-bold leading-[1.15]"
+              style={{
+                fontSize: "clamp(1.75rem, 7vw, 2.2rem)",
+                color: "var(--surface-base)",
+              }}
+            >
+              ¿Y si la próxima revelación{" "}
+              <em className="not-italic" style={{ color: "var(--brand-gold)" }}>
+                es la tuya?
+              </em>
+            </h2>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <p
+              className="mt-4 text-sm leading-relaxed"
+              style={{ color: "color-mix(in oklab, var(--surface-base) 70%, transparent)" }}
+            >
+              Imagina que en 30 días entiendes por primera vez POR QUÉ el dinero siempre se va.
+              No con culpa — con comprensión. Y desde ahí, con un camino concreto hacia la sanación.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.14}>
+            <Link href="/onboarding" className="block">
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                className="mt-8 flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+                style={{
+                  background: "var(--brand-primary)",
+                  color: "var(--surface-elevated)",
+                  boxShadow: "0 4px 22px rgba(224,123,64,0.48)",
+                  transition: "transform 100ms",
+                }}
+              >
+                Descubrir mi herida del dinero
+                <ArrowRight weight="bold" size={18} />
+              </motion.button>
+            </Link>
+            <p
+              className="mt-3 text-xs"
+              style={{ color: "color-mix(in oklab, var(--surface-base) 45%, transparent)" }}
+            >
+              Gratis · 5 minutos · Sin tarjeta de crédito
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.2}>
+            <p
+              className="mt-10 text-xs italic leading-relaxed"
+              style={{ color: "color-mix(in oklab, var(--surface-base) 40%, transparent)" }}
+            >
+              PD: El patrón no desaparece solo con el tiempo. Lleva décadas ahí. Pero con el
+              acompañamiento correcto, puede sanar más rápido de lo que imaginas.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §10  FOOTER                                        */}
+      {/* ──────────────────────────────────────────────────── */}
+      <footer
+        className="px-4 py-10"
+        style={{
+          background: "var(--surface-elevated)",
+          borderTop: "1px solid color-mix(in oklab, var(--text-muted) 15%, transparent)",
+        }}
+      >
+        <div className="mx-auto max-w-sm">
+          <div className="flex flex-col items-center gap-6">
+            <span className="font-display text-lg font-semibold">
+              Reconecta<span style={{ color: "var(--brand-primary)" }}>AI</span>
+            </span>
+
+            <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2">
+              {[
+                { label: "Privacidad", href: "/privacidad" },
+                { label: "Términos", href: "/terminos" },
+                { label: "Reembolsos", href: "/reembolsos" },
+                { label: "Aviso IA", href: "/aviso-ia" },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-xs underline-offset-2 hover:underline"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+
+            <p
+              className="text-center text-xs leading-relaxed"
+              style={{ color: "var(--text-muted)", maxWidth: "340px" }}
+            >
+              Reconecta AI es una herramienta de apoyo emocional y no sustituye la atención de
+              un profesional de salud mental. Si estás pasando por una crisis, consulta a un
+              especialista.
+            </p>
+
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+              © {new Date().getFullYear()} Reconecta AI · Todos los derechos reservados
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      {/* ── STICKY CTA (mobile) ─────────────────────────── */}
+      <AnimatePresence>
+        {showSticky && (
+          <motion.div
+            initial={{ y: 88, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 88, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed bottom-0 left-0 right-0 z-50"
+          >
+            <div
+              className="px-4 pt-3"
+              style={{
+                background: "var(--surface-elevated)",
+                boxShadow: "0 -4px 24px rgba(45,24,16,0.14)",
+                paddingBottom: "max(16px, env(safe-area-inset-bottom))",
+              }}
+            >
+              <Link href="/onboarding" className="block">
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  className="flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-sm font-semibold"
+                  style={{
+                    background: "var(--brand-primary)",
+                    color: "var(--surface-elevated)",
+                    boxShadow: "0 4px 12px rgba(224,123,64,0.30)",
+                    transition: "transform 100ms",
+                  }}
+                >
+                  Descubrir mi herida del dinero
+                  <ArrowRight weight="bold" size={16} />
+                </motion.button>
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

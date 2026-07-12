@@ -86,6 +86,10 @@ Reconecta AI: plataforma de sanación emocional de la relación con el dinero us
 
 ## Sesión en progreso 🔧
 - Sesión 3 — Landing page (10 secciones canónicas)
+- ✅ CHECKPOINT — Sesión 3 EN CURSO: planificación completa, copy derivado de FICHA-AVATAR.md
+- Titular: "La herida no está en tu bolsillo" · CTA: "Descubrir mi herida del dinero" → /onboarding
+- Garantía: "La Primera Revelación" · Stack valor $284→desde $4.99/mes · 4 meses gratis plan anual
+- Próximo paso: codear app/page.tsx 10 secciones → tsc + build → screenshot 375px → revisor-visual
 
 ## Próximas sesiones 📋
 - Sesión 3 (SIGUIENTE): Página de ventas — 10 secciones canónicas, copy desde FICHA-AVATAR.md

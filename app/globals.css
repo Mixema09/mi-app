@@ -14,9 +14,20 @@
 
   /* Brand */
   --brand-primary:        #E07B40;   /* naranja tierra — SOLO CTA, progreso activo */
+  --brand-primary-mid:    #F5A86B;   /* naranja claro — inicio del degradé Soft-3D */
   --brand-primary-light:  #F5D4BB;   /* fondo de chips/badges de acento */
   --brand-gold:           #C9951A;   /* logros, racha, nivel de Merecimiento */
+  --brand-gold-mid:       #F5CE6A;   /* dorado claro — inicio del degradé dorado */
   --brand-gold-light:     #F5E8BB;   /* fondo de chips dorados */
+
+  /* Componente Soft-3D (receta ownable FICHA-ARTE.md) */
+  --soft3d-bg:     linear-gradient(145deg, #F5A86B, #E07B40);
+  --soft3d-shadow: inset 0 1px 2px rgba(255,255,255,0.40), inset 0 -2px 3px rgba(0,0,0,0.15), 0 4px 10px rgba(224,123,64,0.30);
+  --soft3d-shadow-lg: inset 0 1px 2px rgba(255,255,255,0.40), inset 0 -2px 3px rgba(0,0,0,0.15), 0 4px 14px rgba(224,123,64,0.32);
+
+  /* Componente Soft-3D dorado */
+  --gold-bg:     linear-gradient(145deg, #F5CE6A, #C9951A);
+  --gold-shadow: inset 0 1px 2px rgba(255,255,255,0.40), inset 0 -2px 3px rgba(0,0,0,0.15), 0 4px 16px rgba(201,149,26,0.38);
 
   /* Semantic */
   --semantic-success: #4CAF72;
