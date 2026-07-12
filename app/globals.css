@@ -111,3 +111,13 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Blob hero — morphing orgánico 12s */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes blobMorph {
+    0%, 100% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 70%; }
+    33%       { border-radius: 45% 55% 40% 60% / 65% 35% 65% 35%; }
+    66%       { border-radius: 40% 60% 30% 70% / 60% 40% 70% 30%; }
+  }
+  .blob-hero { animation: blobMorph 12s ease-in-out infinite; }
+}

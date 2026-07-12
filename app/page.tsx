@@ -318,13 +318,15 @@ function CustomCheck() {
 function Blob({
   color = "primary",
   style,
+  className: extraClass = "",
 }: {
   color?: "primary" | "gold";
   style?: React.CSSProperties;
+  className?: string;
 }) {
   return (
     <div
-      className="pointer-events-none absolute"
+      className={`pointer-events-none absolute ${extraClass}`}
       style={{
         background:
           color === "gold"
@@ -451,6 +453,24 @@ export default function LandingPage() {
     },
   ];
 
+  const betaTestimonials = [
+    {
+      quote: "El tercer día entendí por qué siempre que me va bien, lo saboteo. Llevo 8 años con ese patrón y nunca lo había visto tan claro.",
+      initials: "D.M.",
+      city: "Bogotá",
+    },
+    {
+      quote: "No lloré de tristeza. Lloré porque por primera vez alguien me hizo la pregunta exacta que necesitaba. Y esa pregunta la hizo una IA.",
+      initials: "V.R.",
+      city: "Ciudad de México",
+    },
+    {
+      quote: "Siempre bajo mis precios cuando el cliente duda. El diagnóstico me dijo de dónde viene eso. Fue incómodo — y fue exactamente lo que necesitaba.",
+      initials: "S.L.",
+      city: "Buenos Aires",
+    },
+  ];
+
   const valueItems = [
     { label: "Diagnóstico Emocional del Dinero™", value: "$97", note: "≈ 1 sesión de psicología" },
     { label: "Chat IA con memoria completa", value: "$67", note: undefined as string | undefined },
@@ -491,7 +511,7 @@ export default function LandingPage() {
       {/* §1  HERO                                           */}
       {/* ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden px-4 pb-16 pt-10">
-        <Blob style={{ left: "-20%", top: "-10%", width: "480px", height: "480px", opacity: 0.7 }} />
+        <Blob className="blob-hero" style={{ left: "-20%", top: "-10%", width: "480px", height: "480px", opacity: 0.7 }} />
         <Blob color="gold" style={{ right: "-15%", bottom: "5%", width: "300px", height: "300px", opacity: 0.5 }} />
 
         <div className="relative mx-auto max-w-sm">
@@ -736,6 +756,61 @@ export default function LandingPage() {
       </section>
 
       {/* ──────────────────────────────────────────────────── */}
+      {/* §3B PRUEBA SOCIAL — BETA                           */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
+        <div className="mx-auto max-w-sm">
+          <Reveal>
+            <Kicker>Acceso anticipado · Beta</Kicker>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2
+              className="mt-4 font-display text-2xl font-bold leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Lo que las primeras usuarias descubrieron
+            </h2>
+          </Reveal>
+
+          <div className="mt-8 flex flex-col gap-4">
+            {betaTestimonials.map((t, i) => (
+              <Reveal key={i} delay={i * 0.07}>
+                <div
+                  className="rounded-[var(--radius-md)] p-5"
+                  style={{
+                    background: "var(--surface-base)",
+                    boxShadow: "var(--shadow-sm)",
+                    borderLeft: "3px solid var(--brand-primary)",
+                  }}
+                >
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ color: "var(--text-secondary)", fontStyle: "italic" }}
+                  >
+                    "{t.quote}"
+                  </p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="flex size-7 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold"
+                        style={{ background: "color-mix(in oklab, var(--brand-primary) 12%, transparent)", color: "var(--brand-primary)" }}
+                      >
+                        {t.initials[0]}
+                      </div>
+                      <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
+                        {t.initials} · {t.city}
+                      </p>
+                    </div>
+                    <span className="text-xs" style={{ color: "var(--text-muted)" }}>Acceso anticipado</span>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
       {/* §4  SOLUCIÓN — MÉTODO RAÍZ™                        */}
       {/* ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
@@ -893,7 +968,7 @@ export default function LandingPage() {
                   </>
                 ) : (
                   <>
-                    Empezar gratis — sin tarjeta
+                    Descubrir mi herida del dinero
                     <ArrowRight weight="bold" size={16} />
                   </>
                 )}
@@ -1122,6 +1197,10 @@ export default function LandingPage() {
               <p className="mt-4 text-sm font-medium" style={{ color: "var(--brand-primary)" }}>
                 Porque si no te conocemos, no merecemos tu dinero.
               </p>
+
+              <p className="mt-3 text-xs leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                La garantía aplica desde el día 8, cuando se realiza el primer cargo. Tienes 14 días desde ese momento para solicitarla.
+              </p>
             </div>
           </Reveal>
         </div>
@@ -1202,7 +1281,7 @@ export default function LandingPage() {
               <Reveal key={i} delay={i * 0.04}>
                 <div
                   className="overflow-hidden rounded-[var(--radius-md)]"
-                  style={{ background: "var(--surface-base)", boxShadow: "var(--shadow-sm)" }}
+                  style={{ background: "var(--surface-elevated)", boxShadow: "var(--shadow-md)" }}
                 >
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
