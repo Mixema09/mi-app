@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1400, initial-scale=1.0">
+  <title>Reconecta AI — Identidad Visual A/B/C</title>
+
+  <!-- Google Fonts: Playfair Display + DM Sans
+       Fallback: monospace (fallback-trampa: si no carga, se ve monospace y el fallo es obvio) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Brand tokens compartidos por las 3 opciones ── */
+    :root {
+      --cream:   #FAF6F0;
+      --white:   #FFFFFF;
+      --sunken:  #F3EDE5;
+      --t1:      #2D1810;
+      --t2:      #6B5344;
+      --t3:      #9C7B6B;
+      --orange:  #E07B40;
+      --orange-l:#F5D4BB;
+      --gold:    #C9951A;
+      --gold-l:  #F5E8BB;
+      --border:  rgba(45,24,16,0.10);
+      --shadow:  0 2px 8px rgba(45,24,16,0.10);
+      --r:       16px;
+      --r-lg:    24px;
+      --r-xl:    28px;
+      --r-pill:  999px;
+    }
+
+    /* ── Página ── */
+    body {
+      background: #EDE8E1;
+      font-family: 'DM Sans', monospace; /* monospace fallback-trampa */
+      padding: 56px 32px 80px;
+      min-width: 1250px;
+    }
+
+    .page-header { text-align: center; margin-bottom: 48px; }
+    .page-title {
+      font-family: 'Playfair Display', monospace;
+      font-size: 34px; font-weight: 700;
+      color: var(--t1); margin-bottom: 8px;
+    }
+    .page-subtitle { color: var(--t2); font-size: 15px; line-height: 1.5; }
+    .page-note {
+      display: inline-block; margin-top: 12px;
+      background: rgba(224,123,64,0.12); border-radius: var(--r-pill);
+      padding: 6px 16px; color: var(--orange); font-size: 13px; font-weight: 600;
+    }
+
+    /* ── Grid de frames ── */
+    .frames-grid {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .frame-col { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+
+    .frame-label {
+      background: var(--t1); color: var(--cream);
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 14px; border-radius: var(--r-pill);
+    }
+    .frame-name {
+      font-family: 'Playfair Display', monospace;
+      font-size: 22px; font-weight: 700; color: var(--t1);
+    }
+    .frame-desc {
+      color: var(--t2); font-size: 13px; line-height: 1.5;
+      text-align: center; max-width: 300px;
+    }
+
+    /* ── Phone frame ── */
+    .phone {
+      width: 375px; height: 780px;
+      border-radius: 46px;
+      overflow: hidden;
+      box-shadow:
+        0 30px 80px rgba(45,24,16,0.22),
+        0 4px 16px rgba(45,24,16,0.12),
+        inset 0 0 0 1px rgba(45,24,16,0.10);
+      position: relative;
+      background: var(--cream);
+    }
+
+    /* Status bar */
+    .sbar {
+      height: 44px; padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; font-weight: 600;
+    }
+    .sbar-icons { display: flex; gap: 6px; align-items: center; }
+
+    /* Scroll area */
+    .pscroll {
+      height: calc(780px - 44px - 68px);
+      overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: none;
+    }
+    .pscroll::-webkit-scrollbar { display: none; }
+
+    /* Bottom nav */
+    .bnav {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 68px; background: var(--white);
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 0 8px 4px;
+    }
+    .nav-it {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 3px;
+      padding: 6px 16px; border-radius: 12px;
+    }
+    .nav-it.active { background: var(--orange-l); }
+    .nav-ico { width: 22px; height: 22px; }
+    .nav-lbl { font-size: 10px; font-weight: 500; }
+    .nav-it.active .nav-lbl { color: var(--orange); font-weight: 600; }
+    .nav-it:not(.active) .nav-lbl { color: var(--t3); }
+
+    /* ── SVG icons ── */
+    svg { display: block; }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 48px; text-align: center;
+      background: var(--white); border-radius: var(--r-lg);
+      padding: 32px 40px;
+      box-shadow: var(--shadow);
+      max-width: 960px; margin-left: auto; margin-right: auto;
+    }
+    .footer h3 {
+      font-family: 'Playfair Display', monospace;
+      font-size: 20px; font-weight: 700; color: var(--t1); margin-bottom: 8px;
+    }
+    .footer p { color: var(--t2); font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+    .footer-opts { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .fopt {
+      border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 10px 20px;
+      font-size: 13px; font-weight: 500; color: var(--t1);
+      background: var(--sunken);
+    }
+    .fopt em { color: var(--orange); font-style: normal; font-weight: 700; }
+
+
+    /* ══════════════════════════════════════════
+       OPCIÓN A — SANTUARIO
+       Composición: cards XL flotantes + blob orgánico + íconos soft-3D
+       Ownable: blob orgánico luminoso + chips con gradiente
+    ══════════════════════════════════════════ */
+
+    .a-sbar { background: var(--cream); color: var(--t1); }
+
+    .a-header {
+      padding: 16px 20px 8px;
+      background: var(--cream);
+    }
+    .a-greeting { font-size: 12px; font-weight: 500; color: var(--t3); letter-spacing: 0.04em; }
+    .a-name {
+      font-family: 'Playfair Display', monospace;
+      font-size: 26px; font-weight: 700; color: var(--t1); line-height: 1.15;
+      margin-top: 2px;
+    }
+    .a-sub { font-size: 13px; color: var(--t2); margin-top: 4px; }
+
+    /* HERO CARD con blob */
+    .a-hero {
+      margin: 16px 16px 0;
+      background: var(--white);
+      border-radius: var(--r-xl);
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(45,24,16,0.10);
+      position: relative;
+      overflow: hidden;
+    }
+    .a-blob {
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      background: radial-gradient(ellipse at 50% 50%,
+        rgba(224,123,64,0.22) 0%,
+        rgba(201,149,26,0.10) 50%,
+        transparent 70%);
+      border-radius: 60% 40% 70% 30% / 50% 60% 40% 70%;
+      filter: blur(8px);
+    }
+    .a-hero-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--orange-l); border-radius: var(--r-pill);
+      padding: 4px 12px;
+      font-size: 11px; font-weight: 600; color: var(--orange);
+      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px;
+      position: relative; z-index: 1;
+    }
+    .a-hero-title {
+      font-family: 'Playfair Display', monospace;
+      font-size: 24px; font-weight: 700; color: var(--t1);
+      line-height: 1.2; margin-bottom: 8px;
+      position: relative; z-index: 1;
+    }
+    .a-hero-meta { font-size: 13px; color: var(--t2); margin-bottom: 20px; position: relative; z-index: 1; }
+    .a-hero-btn {
+      background: var(--orange); color: white;
+      border-radius: var(--r); padding: 14px 24px;
+      font-size: 15px; font-weight: 600;
+      width: 100%; text-align: center;
+      position: relative; z-index: 1;
+      box-shadow: 0 4px 12px rgba(224,123,64,0.35);
+    }
+
+    /* PROGRESS SECTION */
+    .a-progress { padding: 20px 16px 0; }
+    .a-section-label { font-size: 11px; font-weight: 600; color: var(--t3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
+    .a-herida-card {
+      background: var(--white); border-radius: var(--r-lg); padding: 20px;
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .a-ring-wrap { position: relative; flex-shrink: 0; }
+    .a-ring-txt {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .a-ring-pct { font-size: 16px; font-weight: 700; color: var(--t1); }
+    .a-ring-sub { font-size: 9px; font-weight: 500; color: var(--t3); }
+    .a-herida-info { flex: 1; min-width: 0; }
+    .a-herida-name {
+      font-family: 'Playfair Display', monospace;
+      font-size: 15px; font-weight: 600; color: var(--t1); margin-bottom: 4px;
+    }
+    .a-herida-level { font-size: 12px; color: var(--t2); margin-bottom: 10px; }
+    .a-progress-bar {
+      height: 6px; background: var(--sunken); border-radius: var(--r-pill); overflow: hidden;
+    }
+    .a-progress-fill { height: 100%; background: var(--orange); border-radius: var(--r-pill); }
+
+    /* STREAK + MERECIMIENTO */
+    .a-badges { padding: 16px 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .a-badge-card { background: var(--white); border-radius: var(--r); padding: 16px; box-shadow: var(--shadow); }
+    .a-badge-icon {
+      width: 40px; height: 40px; border-radius: 12px; margin-bottom: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .a-badge-icon.orange {
+      background: linear-gradient(145deg, #F5A86B, var(--orange));
+      box-shadow: inset 0 1px 2px rgba(255,255,255,.4), inset 0 -2px 3px rgba(0,0,0,.15), 0 4px 10px rgba(224,123,64,0.3);
+    }
+    .a-badge-icon.gold {
+      background: linear-gradient(145deg, #E0B84A, var(--gold));
+      box-shadow: inset 0 1px 2px rgba(255,255,255,.4), inset 0 -2px 3px rgba(0,0,0,.15), 0 4px 10px rgba(201,149,26,0.3);
+    }
+    .a-badge-val { font-size: 22px; font-weight: 700; color: var(--t1); }
+    .a-badge-lbl { font-size: 11px; color: var(--t2); font-weight: 500; margin-top: 2px; }
+
+    /* PRÓXIMO */
+    .a-next { padding: 16px 16px 24px; }
+    .a-next-card {
+      background: var(--sunken); border-radius: var(--r);
+      padding: 16px; display: flex; align-items: center; gap: 14px;
+    }
+    .a-next-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--t3); flex-shrink: 0;
+    }
+    .a-next-txt { font-size: 13px; color: var(--t2); }
+    .a-next-time { font-size: 12px; color: var(--t3); margin-top: 2px; }
+
+
+    /* ══════════════════════════════════════════
+       OPCIÓN B — CAMINO
+       Composición: journey steps + bento grid + badge rotado
+       Ownable: barra de etapas horizontal + badge de racha rotado
+    ══════════════════════════════════════════ */
+
+    .b-sbar { background: var(--white); color: var(--t1); }
+
+    .b-header {
+      background: var(--white);
+      padding: 12px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .b-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .b-greeting-small { font-size: 12px; color: var(--t2); font-weight: 500; }
+    .b-name {
+      font-size: 20px; font-weight: 700; color: var(--t1);
+      margin-top: 2px;
+    }
+    .b-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange-l), var(--gold-l));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700; color: var(--orange);
+    }
+
+    /* Journey steps */
+    .b-journey { padding: 16px 20px; }
+    .b-journey-label { font-size: 11px; font-weight: 600; color: var(--t3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+    .b-steps {
+      display: flex; align-items: center; gap: 0;
+      background: var(--sunken); border-radius: var(--r-pill); padding: 4px;
+    }
+    .b-step {
+      flex: 1; height: 28px; border-radius: var(--r-pill);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600;
+    }
+    .b-step.done { background: none; color: var(--t3); }
+    .b-step.active {
+      background: var(--orange); color: white;
+      box-shadow: 0 2px 8px rgba(224,123,64,0.4);
+    }
+    .b-step.upcoming { background: none; color: var(--border); }
+
+    /* Bento grid */
+    .b-bento { padding: 0 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .b-bento-card {
+      background: var(--white); border-radius: var(--r);
+      padding: 14px; box-shadow: var(--shadow);
+      position: relative;
+    }
+    .b-bento-card.accent { background: var(--orange); }
+    .b-bento-card.accent .b-bc-label { color: rgba(255,255,255,0.75); }
+    .b-bento-card.accent .b-bc-val { color: white; }
+    .b-bc-label { font-size: 11px; color: var(--t3); font-weight: 500; margin-bottom: 6px; }
+    .b-bc-val { font-size: 28px; font-weight: 700; color: var(--t1); line-height: 1; }
+    .b-bc-unit { font-size: 12px; font-weight: 500; color: var(--t2); margin-top: 4px; }
+    .b-streak-badge {
+      position: absolute; top: -8px; right: -8px;
+      background: var(--gold); color: white;
+      font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: var(--r-pill);
+      transform: rotate(-4deg);
+      box-shadow: 0 2px 6px rgba(201,149,26,0.4);
+    }
+    .b-merec-bar {
+      height: 4px; background: rgba(255,255,255,0.25);
+      border-radius: var(--r-pill); margin-top: 10px; overflow: hidden;
+    }
+    .b-merec-fill { height: 100%; background: white; border-radius: var(--r-pill); }
+
+    /* Exercise card */
+    .b-exercise { padding: 12px 16px; }
+    .b-ex-card {
+      background: var(--white); border-radius: var(--r-lg);
+      padding: 20px; box-shadow: var(--shadow);
+      border-left: 4px solid var(--orange);
+    }
+    .b-ex-tag {
+      display: inline-block;
+      background: var(--orange-l); color: var(--orange);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: var(--r-pill); margin-bottom: 10px;
+    }
+    .b-ex-title {
+      font-family: 'Playfair Display', monospace;
+      font-size: 20px; font-weight: 600; color: var(--t1); margin-bottom: 8px;
+      line-height: 1.25;
+    }
+    .b-ex-desc { font-size: 13px; color: var(--t2); line-height: 1.5; margin-bottom: 16px; }
+    .b-ex-meta { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+    .b-meta-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--sunken); border-radius: var(--r-pill);
+      padding: 4px 10px; font-size: 12px; color: var(--t2); font-weight: 500;
+    }
+    .b-ex-btn {
+      background: var(--t1); color: white;
+      border-radius: var(--r); padding: 13px 24px;
+      font-size: 14px; font-weight: 600; text-align: center; width: 100%;
+    }
+
+    /* Heridas section */
+    .b-heridas { padding: 0 16px 24px; }
+    .b-h-label { font-size: 11px; font-weight: 600; color: var(--t3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+    .b-h-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px; background: var(--white); border-radius: var(--r);
+      box-shadow: var(--shadow); margin-bottom: 8px;
+    }
+    .b-h-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .b-h-dot.active { background: var(--orange); }
+    .b-h-dot.pending { background: var(--border); }
+    .b-h-name { font-size: 13px; font-weight: 500; color: var(--t1); flex: 1; }
+    .b-h-lvl { font-size: 11px; color: var(--t3); font-weight: 500; }
+
+
+    /* ══════════════════════════════════════════
+       OPCIÓN C — DIARIO DE RAÍZ
+       Composición: portadilla editorial + cita Playfair grande + patrón de puntos
+       Ownable: doble regla decorativa + dot pattern tierra
+    ══════════════════════════════════════════ */
+
+    .c-phone { background: #FBF7F1; }
+
+    .c-sbar { background: #FBF7F1; color: var(--t1); }
+
+    .c-header { padding: 16px 24px 0; background: #FBF7F1; }
+    .c-date { font-size: 11px; font-weight: 600; color: var(--t3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+    .c-name {
+      font-family: 'Playfair Display', monospace;
+      font-size: 24px; font-weight: 700; color: var(--t1);
+    }
+
+    /* Double rule ownable device */
+    .c-rule {
+      margin: 16px 24px;
+      position: relative; padding-top: 10px;
+    }
+    .c-rule::before, .c-rule::after {
+      content: ''; display: block;
+      position: absolute; left: 0; right: 0;
+      border-top: 1.5px solid var(--t1);
+    }
+    .c-rule::before { top: 0; }
+    .c-rule::after  { top: 4px; border-top-width: 1px; opacity: 0.3; }
+
+    /* Big italic quote */
+    .c-quote-wrap { padding: 8px 24px 20px; }
+    .c-quote {
+      font-family: 'Playfair Display', monospace;
+      font-size: 28px; font-weight: 400; font-style: italic;
+      color: var(--t1); line-height: 1.25;
+    }
+    .c-quote-attr { margin-top: 10px; font-size: 12px; color: var(--t3); font-weight: 500; }
+
+    /* Divider simple */
+    .c-divider { height: 1px; background: var(--border); margin: 0 24px; }
+
+    /* Exercise card with dot pattern */
+    .c-exercise { padding: 20px 16px 0; }
+    .c-ex-card {
+      border-radius: var(--r-xl); overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .c-ex-top {
+      background: var(--white);
+      background-image: radial-gradient(rgba(45,24,16,0.07) 1px, transparent 1px);
+      background-size: 14px 14px;
+      padding: 20px;
+    }
+    .c-ex-tag2 {
+      display: inline-block;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--t3); margin-bottom: 10px;
+    }
+    .c-ex-title2 {
+      font-family: 'Playfair Display', monospace;
+      font-size: 22px; font-weight: 700; color: var(--t1);
+      margin-bottom: 8px; line-height: 1.2;
+    }
+    .c-ex-desc2 { font-size: 13px; color: var(--t2); line-height: 1.5; margin-bottom: 14px; }
+    .c-meta-row { display: flex; gap: 10px; margin-bottom: 18px; }
+    .c-chip {
+      display: flex; align-items: center; gap: 4px;
+      background: var(--sunken); border-radius: var(--r-pill);
+      padding: 4px 10px; font-size: 11px; font-weight: 500; color: var(--t2);
+    }
+    .c-ex-btn {
+      background: var(--orange); color: white;
+      border-radius: var(--r); padding: 14px;
+      font-size: 15px; font-weight: 600; text-align: center;
+      box-shadow: 0 4px 12px rgba(224,123,64,0.4);
+    }
+    .c-ex-bottom {
+      background: var(--sunken); padding: 14px 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .c-gold-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--gold); flex-shrink: 0;
+    }
+    .c-ex-bottom-txt { font-size: 12px; color: var(--t2); }
+
+    /* Herida pills */
+    .c-heridas { padding: 20px 16px; }
+    .c-h-title {
+      font-family: 'Playfair Display', monospace;
+      font-size: 16px; font-weight: 600; color: var(--t1); margin-bottom: 12px;
+    }
+    .c-h-pills { display: flex; flex-direction: column; gap: 10px; }
+    .c-pill {
+      background: var(--white); border-radius: var(--r);
+      padding: 14px 16px; box-shadow: var(--shadow);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .c-pill.active { border: 1.5px solid var(--orange-l); }
+    .c-pill-name { font-size: 13px; font-weight: 500; color: var(--t1); }
+    .c-pill-stage {
+      display: flex; gap: 4px;
+    }
+    .c-stage {
+      width: 16px; height: 5px; border-radius: 3px;
+      background: var(--sunken);
+    }
+    .c-stage.filled { background: var(--orange); }
+    .c-stage.gold   { background: var(--gold); }
+
+    /* Streak chip */
+    .c-streak {
+      margin: 0 16px 24px;
+      background: var(--gold-l); border-radius: var(--r);
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .c-streak-ico {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--gold); display: flex; align-items: center; justify-content: center;
+    }
+    .c-streak-val { font-size: 20px; font-weight: 700; color: var(--t1); }
+    .c-streak-lbl { font-size: 12px; color: var(--t2); }
+
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <h1 class="page-title">Reconecta AI — Identidad Visual</h1>
+    <p class="page-subtitle">
+      3 interpretaciones del mismo contrato visual (FICHA-ARTE.md).<br>
+      Misma pantalla • Mismos colores y tipografías • Composición y dispositivo distintos.
+    </p>
+    <span class="page-note">⚡ Ábrelo con conexión a internet para ver las tipografías correctas</span>
+  </div>
+
+  <div class="frames-grid">
+
+    <!-- ─── OPCIÓN A ─── -->
+    <div class="frame-col">
+      <div>
+        <span class="frame-label">Opción A</span>
+      </div>
+      <div class="frame-name">Santuario</div>
+      <div class="frame-desc">Cards XL flotantes + blob orgánico en el héroe + íconos soft-3D.<br><em>Inspirada en Soul Breathwork.</em></div>
+
+      <div class="phone">
+        <!-- Status bar -->
+        <div class="sbar a-sbar">
+          <span>9:41</span>
+          <div class="sbar-icons">
+            <svg class="nav-ico" style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none">
+              <path d="M1 6C1 4.9 1.9 4 3 4h18c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V6z" fill="currentColor" opacity=".25"/>
+              <path d="M1 8h22" stroke="currentColor" stroke-width="1.5"/>
+              <rect x="4" y="14" width="4" height="3" rx="1" fill="currentColor"/>
+            </svg>
+            <svg style="width:15px;height:15px;" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M1.5 8.5C5.4 4.2 10.4 2 12 2s6.6 2.2 10.5 6.5L21 10c-3.4-3.9-7.3-6-9-6s-5.6 2.1-9 6l-1.5-1.5z"/>
+              <path d="M5 12c1.9-2.1 4.4-3.5 7-3.5s5.1 1.4 7 3.5l-1.5 1.5C15.9 11.4 14 10.5 12 10.5S8.1 11.4 6.5 13.5L5 12z" opacity=".75"/>
+              <circle cx="12" cy="17" r="2"/>
+            </svg>
+            <svg style="width:25px;height:12px;" viewBox="0 0 25 12">
+              <rect x="0" y="1" width="21" height="10" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              <rect x="2" y="3" width="15" height="6" rx="1.5" fill="currentColor"/>
+              <path d="M22 4v4a2 2 0 000-4z" fill="currentColor" opacity=".4"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Scroll content -->
+        <div class="pscroll">
+
+          <!-- Header -->
+          <div class="a-header">
+            <div class="a-greeting">Buenos días ✦</div>
+            <div class="a-name">Valentina</div>
+            <div class="a-sub">Sábado · 12 de julio</div>
+          </div>
+
+          <!-- Hero card con blob orgánico -->
+          <div class="a-hero">
+            <div class="a-blob"></div>
+            <div class="a-hero-tag">
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>
+              Ejercicio de hoy
+            </div>
+            <div class="a-hero-title">Carta a tu<br>niña interior</div>
+            <div class="a-hero-meta">5 min · Nivel 3 de 7 · Herida del No Merecimiento</div>
+            <div class="a-hero-btn">Comenzar ahora</div>
+          </div>
+
+          <!-- Tu herida activa -->
+          <div class="a-progress">
+            <div class="a-section-label">Tu herida activa</div>
+            <div class="a-herida-card">
+              <!-- SVG ring progress 43% -->
+              <div class="a-ring-wrap">
+                <svg width="72" height="72" viewBox="0 0 72 72">
+                  <circle cx="36" cy="36" r="28" fill="none" stroke="#F3EDE5" stroke-width="8"/>
+                  <circle cx="36" cy="36" r="28" fill="none" stroke="#E07B40" stroke-width="8"
+                    stroke-linecap="round"
+                    stroke-dasharray="175.93"
+                    stroke-dashoffset="100.28"
+                    transform="rotate(-90 36 36)"/>
+                </svg>
+                <div class="a-ring-txt">
+                  <div class="a-ring-pct">43%</div>
+                  <div class="a-ring-sub">nivel 3/7</div>
+                </div>
+              </div>
+              <div class="a-herida-info">
+                <div class="a-herida-name">Herida del<br>No Merecimiento</div>
+                <div class="a-herida-level">Nivel 3 de 7 · En proceso</div>
+                <div class="a-progress-bar"><div class="a-progress-fill" style="width:43%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Badges: racha + merecimiento -->
+          <div class="a-badges">
+            <div class="a-badge-card">
+              <div class="a-badge-icon orange">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <path d="M12 2C9.5 7 4 9 4 14a8 8 0 1016 0c0-5-5.5-7-8-12z"/>
+                </svg>
+              </div>
+              <div class="a-badge-val">4</div>
+              <div class="a-badge-lbl">días de racha</div>
+            </div>
+            <div class="a-badge-card">
+              <div class="a-badge-icon gold">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.4 2.4-7.4L2 9.4h7.6z"/>
+                </svg>
+              </div>
+              <div class="a-badge-val">38%</div>
+              <div class="a-badge-lbl">merecimiento</div>
+            </div>
+          </div>
+
+          <!-- Próximo ejercicio -->
+          <div class="a-next">
+            <div class="a-next-card">
+              <div class="a-next-dot"></div>
+              <div>
+                <div class="a-next-txt">Mañana: Espejo de amor propio</div>
+                <div class="a-next-time">Domingo · 9:00 AM</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /pscroll -->
+
+        <!-- Bottom nav -->
+        <div class="bnav">
+          <div class="nav-it active">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#E07B40" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span class="nav-lbl">Inicio</span>
+          </div>
+          <div class="nav-it">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#9C7B6B" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span class="nav-lbl">Ruta</span>
+          </div>
+          <div class="nav-it">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#9C7B6B" stroke-width="2">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+            <span class="nav-lbl">Chat IA</span>
+          </div>
+          <div class="nav-it">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#9C7B6B" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span class="nav-lbl">Perfil</span>
+          </div>
+        </div>
+      </div><!-- /phone -->
+    </div>
+
+
+    <!-- ─── OPCIÓN B ─── -->
+    <div class="frame-col">
+      <div><span class="frame-label">Opción B</span></div>
+      <div class="frame-name">Camino</div>
+      <div class="frame-desc">Barra de etapas del journey + bento + badge de racha rotado + borde izquierdo acento.<br><em>Inspirada en Inner Child App.</em></div>
+
+      <div class="phone">
+        <div class="sbar b-sbar">
+          <span>9:41</span>
+          <div class="sbar-icons">
+            <svg style="width:15px;height:15px;" viewBox="0 0 24 24" fill="#2D1810">
+              <path d="M1.5 8.5C5.4 4.2 10.4 2 12 2s6.6 2.2 10.5 6.5L21 10c-3.4-3.9-7.3-6-9-6s-5.6 2.1-9 6l-1.5-1.5z"/>
+              <path d="M5 12c1.9-2.1 4.4-3.5 7-3.5s5.1 1.4 7 3.5l-1.5 1.5C15.9 11.4 14 10.5 12 10.5S8.1 11.4 6.5 13.5L5 12z" opacity=".75"/>
+              <circle cx="12" cy="17" r="2"/>
+            </svg>
+            <svg style="width:25px;height:12px;" viewBox="0 0 25 12">
+              <rect x="0" y="1" width="21" height="10" rx="3" stroke="#2D1810" stroke-width="1.5" fill="none"/>
+              <rect x="2" y="3" width="15" height="6" rx="1.5" fill="#2D1810"/>
+              <path d="M22 4v4a2 2 0 000-4z" fill="#2D1810" opacity=".4"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="pscroll">
+
+          <!-- Header -->
+          <div class="b-header">
+            <div class="b-top">
+              <div>
+                <div class="b-greeting-small">Tu camino de sanación</div>
+                <div class="b-name">Hola, Valentina 👋</div>
+              </div>
+              <div class="b-avatar">V</div>
+            </div>
+          </div>
+
+          <!-- Journey steps (ownable device) -->
+          <div class="b-journey">
+            <div class="b-journey-label">Herida del No Merecimiento · Etapa</div>
+            <div class="b-steps">
+              <div class="b-step done">1</div>
+              <div class="b-step done">2</div>
+              <div class="b-step active">3</div>
+              <div class="b-step upcoming">4</div>
+              <div class="b-step upcoming">5</div>
+              <div class="b-step upcoming">6</div>
+              <div class="b-step upcoming">7</div>
+            </div>
+          </div>
+
+          <!-- Bento 2 col -->
+          <div class="b-bento">
+            <div class="b-bento-card accent">
+              <div class="b-streak-badge">🔥 RACHA</div>
+              <div class="b-bc-label">Días consecutivos</div>
+              <div class="b-bc-val">4</div>
+              <div class="b-bc-unit">días seguidos</div>
+            </div>
+            <div class="b-bento-card">
+              <div class="b-bc-label">Nivel de Merecimiento</div>
+              <div class="b-bc-val" style="color:#C9951A;">38<span style="font-size:14px;color:#6B5344">%</span></div>
+              <div class="b-bc-unit">↑ subiendo</div>
+              <div class="b-merec-bar" style="background:var(--sunken)">
+                <div class="b-merec-fill" style="width:38%;background:var(--gold)"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exercise card (ownable: left orange border) -->
+          <div class="b-exercise">
+            <div class="b-ex-card">
+              <div class="b-ex-tag">Hoy · 5 min</div>
+              <div class="b-ex-title">Carta a tu niña interior</div>
+              <div class="b-ex-desc">Escribe una carta amorosa a la niña que fuiste a los 8 años. Cuéntale que hoy estás aquí para ella.</div>
+              <div class="b-ex-meta">
+                <div class="b-meta-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B5344" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  5 minutos
+                </div>
+                <div class="b-meta-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B5344" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  Journaling
+                </div>
+              </div>
+              <div class="b-ex-btn">Empezar ejercicio</div>
+            </div>
+          </div>
+
+          <!-- Heridas en proceso -->
+          <div class="b-heridas">
+            <div class="b-h-label">Todas tus heridas</div>
+            <div class="b-h-item">
+              <div class="b-h-dot active"></div>
+              <div class="b-h-name">Herida del No Merecimiento</div>
+              <div class="b-h-lvl">3/7</div>
+            </div>
+            <div class="b-h-item">
+              <div class="b-h-dot pending"></div>
+              <div class="b-h-name">Sabotaje al éxito</div>
+              <div class="b-h-lvl">Próxima</div>
+            </div>
+            <div class="b-h-item">
+              <div class="b-h-dot pending"></div>
+              <div class="b-h-name">Herida de escasez</div>
+              <div class="b-h-lvl">Próxima</div>
+            </div>
+          </div>
+
+        </div><!-- /pscroll -->
+
+        <div class="bnav">
+          <div class="nav-it active">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#E07B40" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span class="nav-lbl">Inicio</span>
+          </div>
+          <div class="nav-it">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#9C7B6B" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span class="nav-lbl">Ruta</span>
+          </div>
+          <div class="nav-it">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#9C7B6B" stroke-width="2">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+            <span class="nav-lbl">Chat IA</span>
+          </div>
+          <div class="nav-it">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#9C7B6B" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span class="nav-lbl">Perfil</span>
+          </div>
+        </div>
+      </div><!-- /phone -->
+    </div>
+
+
+    <!-- ─── OPCIÓN C ─── -->
+    <div class="frame-col">
+      <div><span class="frame-label">Opción C</span></div>
+      <div class="frame-name">Diario de Raíz</div>
+      <div class="frame-desc">Portadilla editorial + cita Playfair Display grande + patrón de puntos tierra.<br><em>Inspirada en Gabby Bernstein App.</em></div>
+
+      <div class="phone c-phone">
+        <div class="sbar c-sbar">
+          <span>9:41</span>
+          <div class="sbar-icons">
+            <svg style="width:15px;height:15px;" viewBox="0 0 24 24" fill="#2D1810">
+              <path d="M1.5 8.5C5.4 4.2 10.4 2 12 2s6.6 2.2 10.5 6.5L21 10c-3.4-3.9-7.3-6-9-6s-5.6 2.1-9 6l-1.5-1.5z"/>
+              <path d="M5 12c1.9-2.1 4.4-3.5 7-3.5s5.1 1.4 7 3.5l-1.5 1.5C15.9 11.4 14 10.5 12 10.5S8.1 11.4 6.5 13.5L5 12z" opacity=".75"/>
+              <circle cx="12" cy="17" r="2"/>
+            </svg>
+            <svg style="width:25px;height:12px;" viewBox="0 0 25 12">
+              <rect x="0" y="1" width="21" height="10" rx="3" stroke="#2D1810" stroke-width="1.5" fill="none"/>
+              <rect x="2" y="3" width="15" height="6" rx="1.5" fill="#2D1810"/>
+              <path d="M22 4v4a2 2 0 000-4z" fill="#2D1810" opacity=".4"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="pscroll">
+
+          <!-- Header editorial -->
+          <div class="c-header">
+            <div class="c-date">Sábado · 12 de julio de 2026</div>
+            <div class="c-name">Tu diario de hoy,<br>Valentina</div>
+          </div>
+
+          <!-- Double-rule ownable device -->
+          <div class="c-rule"></div>
+
+          <!-- Large italic quote (protagonist) -->
+          <div class="c-quote-wrap">
+            <div class="c-quote">"La herida no estaba en tu bolsillo — sanemos la raíz juntas."</div>
+            <div class="c-quote-attr">— Tu nota del día</div>
+          </div>
+
+          <div class="c-divider"></div>
+
+          <!-- Exercise card con dot pattern -->
+          <div class="c-exercise">
+            <div class="c-ex-card">
+              <div class="c-ex-top">
+                <div class="c-ex-tag2">Ejercicio de hoy</div>
+                <div class="c-ex-title2">Carta a tu niña interior</div>
+                <div class="c-ex-desc2">Escribe una carta amorosa a la niña que fuiste a los 8 años.</div>
+                <div class="c-meta-row">
+                  <div class="c-chip">⏱ 5 minutos</div>
+                  <div class="c-chip">✍️ Journaling</div>
+                  <div class="c-chip">Nivel 3/7</div>
+                </div>
+                <div class="c-ex-btn">Comenzar ahora</div>
+              </div>
+              <div class="c-ex-bottom">
+                <div class="c-gold-dot"></div>
+                <div class="c-ex-bottom-txt">Mañana: Espejo de amor propio · 9:00 AM</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Heridas como pills -->
+          <div class="c-heridas">
+            <div class="c-h-title">Tus heridas</div>
+            <div class="c-h-pills">
+              <div class="c-pill active">
+                <div>
+                  <div class="c-pill-name">No Merecimiento</div>
+                  <div style="font-size:11px;color:var(--t3);margin-top:2px;">Etapa 3 de 7 · Activa</div>
+                </div>
+                <div class="c-pill-stage">
+                  <div class="c-stage gold"></div>
+                  <div class="c-stage gold"></div>
+                  <div class="c-stage filled"></div>
+                  <div class="c-stage"></div>
+                  <div class="c-stage"></div>
+                  <div class="c-stage"></div>
+                  <div class="c-stage"></div>
+                </div>
+              </div>
+              <div class="c-pill">
+                <div>
+                  <div class="c-pill-name">Sabotaje al éxito</div>
+                  <div style="font-size:11px;color:var(--t3);margin-top:2px;">Próxima herida</div>
+                </div>
+                <div class="c-pill-stage">
+                  <div class="c-stage"></div>
+                  <div class="c-stage"></div>
+                  <div class="c-stage"></div>
+                  <div class="c-stage"></div>
+                  <div class="c-stage"></div>
+                  <div class="c-stage"></div>
+                  <div class="c-stage"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Streak chip -->
+          <div class="c-streak">
+            <div class="c-streak-ico">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                <path d="M12 2C9.5 7 4 9 4 14a8 8 0 1016 0c0-5-5.5-7-8-12z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="c-streak-val">4 días de racha 🔥</div>
+              <div class="c-streak-lbl">Nivel de Merecimiento: 38% · Subiendo</div>
+            </div>
+          </div>
+
+        </div><!-- /pscroll -->
+
+        <div class="bnav">
+          <div class="nav-it active">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#E07B40" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span class="nav-lbl">Inicio</span>
+          </div>
+          <div class="nav-it">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#9C7B6B" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span class="nav-lbl">Ruta</span>
+          </div>
+          <div class="nav-it">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#9C7B6B" stroke-width="2">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+            <span class="nav-lbl">Chat IA</span>
+          </div>
+          <div class="nav-it">
+            <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="#9C7B6B" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span class="nav-lbl">Perfil</span>
+          </div>
+        </div>
+      </div><!-- /phone -->
+    </div>
+
+  </div><!-- /frames-grid -->
+
+
+  <!-- Footer -->
+  <div class="footer">
+    <h3>¿Cuál se siente más como Reconecta AI?</h3>
+    <p>
+      Las tres opciones usan exactamente los mismos colores y fuentes de tu Instagram.<br>
+      Solo cambia cómo está organizada la pantalla y el detalle firma de cada una.
+    </p>
+    <div class="footer-opts">
+      <div class="fopt"><em>(1)</em> Elige A, B o C</div>
+      <div class="fopt"><em>(2)</em> Combina lo mejor ("la B pero con el anillo de la A")</div>
+      <div class="fopt"><em>(3)</em> Pídeme otras 3 distintas</div>
+      <div class="fopt"><em>(4)</em> Ajusta un detalle puntual</div>
+    </div>
+  </div>
+
+</body>
+</html>

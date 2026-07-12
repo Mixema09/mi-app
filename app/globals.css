@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+/* ── Reconecta AI — Design Tokens ─────────────────────────────────── */
+:root {
+  /* Surfaces (light mode — FICHA-ARTE.md) */
+  --surface-base:     #FAF6F0;   /* fondo crema cálida */
+  --surface-elevated: #FFFFFF;   /* cards, modals */
+  --surface-sunken:   #F3EDE5;   /* inputs, fondos hundidos */
+
+  /* Text */
+  --text-primary:   #2D1810;     /* chocolate oscuro */
+  --text-secondary: #6B5344;     /* marrón medio */
+  --text-muted:     #9C7B6B;     /* metadata, placeholders */
+
+  /* Brand */
+  --brand-primary:        #E07B40;   /* naranja tierra — SOLO CTA, progreso activo */
+  --brand-primary-light:  #F5D4BB;   /* fondo de chips/badges de acento */
+  --brand-gold:           #C9951A;   /* logros, racha, nivel de Merecimiento */
+  --brand-gold-light:     #F5E8BB;   /* fondo de chips dorados */
+
+  /* Semantic */
+  --semantic-success: #4CAF72;
+  --semantic-error:   #E05050;
+  --semantic-warning: #F5A623;
+
+  /* Borders */
+  --border-subtle: rgba(45, 24, 16, 0.08);
+  --border-medium: rgba(45, 24, 16, 0.15);
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(45, 24, 16, 0.08);
+  --shadow-md:  0 2px 8px rgba(45, 24, 16, 0.10);
+  --shadow-lg:  0 8px 24px rgba(45, 24, 16, 0.12);
+
+  /* Radius */
+  --radius-sm:  8px;
+  --radius-md:  16px;   /* uniforme en cards, botones, inputs */
+  --radius-lg:  24px;
+  --radius-pill: 999px;
+
+  /* Motion */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Fonts (cargadas en layout.tsx) */
+  --font-display: var(--font-playfair), Georgia, serif;
+  --font-body:    var(--font-dm-sans), system-ui, sans-serif;
+}
+
+/* ── Tailwind v4 @theme — expone tokens como utilidades ────────────── */
+@theme inline {
+  --color-surface-base:     var(--surface-base);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-sunken:   var(--surface-sunken);
+  --color-text-primary:     var(--text-primary);
+  --color-text-secondary:   var(--text-secondary);
+  --color-text-muted:       var(--text-muted);
+  --color-brand:            var(--brand-primary);
+  --color-brand-light:      var(--brand-primary-light);
+  --color-gold:             var(--brand-gold);
+  --color-gold-light:       var(--brand-gold-light);
+  --color-success:          var(--semantic-success);
+  --color-error:            var(--semantic-error);
+  --color-warning:          var(--semantic-warning);
+
+  --radius-sm:   var(--radius-sm);
+  --radius-md:   var(--radius-md);
+  --radius-lg:   var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+
+  --font-display: var(--font-display);
+  --font-body:    var(--font-body);
+}
+
+/* ── Base ──────────────────────────────────────────────────────────── */
+html { background: var(--surface-base); }
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: var(--surface-base);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Shell: min-h-dvh, bottom-nav al fondo */
+.app-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+.app-content { flex: 1; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
