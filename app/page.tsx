@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useInView, useReducedMotion } from "motion/react";
+import { motion, AnimatePresence, useInView, useReducedMotion, useMotionValue, useTransform, animate } from "motion/react";
 import Link from "next/link";
 import {
   Heart,
@@ -13,6 +13,39 @@ import {
   Star,
   ArrowRight,
 } from "@phosphor-icons/react";
+
+// ─── Animated number helpers ───────────────────────────────
+
+// Cuenta de 0 → target cuando entra en viewport (§3 $9,600)
+function AnimatedCounter({ target, prefix = "" }: { target: number; prefix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-10%" });
+  const prefersReduced = useReducedMotion();
+  const mv = useMotionValue(0);
+  const display = useTransform(mv, (v) =>
+    `${prefix}${Math.round(v).toLocaleString("es-419")}`
+  );
+  useEffect(() => {
+    if (!isInView) return;
+    if (prefersReduced) { mv.set(target); return; }
+    const controls = animate(mv, target, { duration: 1.4, ease: "easeOut" });
+    return controls.stop;
+  }, [isInView, prefersReduced]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <motion.span ref={ref}>{display}</motion.span>;
+}
+
+// Cuenta desde ~50 % del valor → target en mount (usado dentro de AnimatePresence §6)
+function AnimatedNumber({ value, decimals = 2 }: { value: number; decimals?: number }) {
+  const prefersReduced = useReducedMotion();
+  const mv = useMotionValue(prefersReduced ? value : value * 0.5);
+  const display = useTransform(mv, (v) => v.toFixed(decimals));
+  useEffect(() => {
+    if (prefersReduced) return;
+    const controls = animate(mv, value, { duration: 0.5, ease: "easeOut" });
+    return controls.stop;
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  return <motion.span>{display}</motion.span>;
+}
 
 // ─── Schematic app mockups (§5 + hero) ────────────────────
 
@@ -57,6 +90,19 @@ function DiagnosticoScreen() {
 }
 
 function PerfilScreen() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [barsVisible, setBarsVisible] = useState(false);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setBarsVisible(true); obs.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   const bars = [
     { label: "Miedo a la escasez", pct: 78, varColor: "var(--brand-primary)" },
     { label: "Culpa al gastar", pct: 65, varColor: "var(--brand-gold)" },
@@ -64,7 +110,7 @@ function PerfilScreen() {
     { label: "Autoboicot financiero", pct: 55, varColor: "var(--text-secondary)" },
   ];
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", background: "var(--surface-base)", overflow: "hidden" }}>
+    <div ref={containerRef} style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", background: "var(--surface-base)", overflow: "hidden" }}>
       <div style={{ padding: "8px 10px 6px", background: "var(--surface-elevated)" }}>
         <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "9px", color: "var(--brand-primary)" }}>ReconectaAI</span>
       </div>
@@ -81,7 +127,14 @@ function PerfilScreen() {
                 <span style={{ fontSize: "6.5px", fontWeight: 700, color: bar.varColor }}>{bar.pct}%</span>
               </div>
               <div style={{ height: "4px", borderRadius: "9999px", background: "color-mix(in oklab, var(--text-muted) 20%, transparent)", overflow: "hidden" }}>
-                <div style={{ width: `${bar.pct}%`, height: "100%", background: bar.varColor, borderRadius: "inherit" }} />
+                {/* FIX baseline #3: barras se dibujan al entrar en viewport */}
+                <div style={{
+                  width: barsVisible ? `${bar.pct}%` : "0%",
+                  height: "100%",
+                  background: bar.varColor,
+                  borderRadius: "inherit",
+                  transition: `width ${500 + i * 80}ms ease-out ${i * 80}ms`,
+                }} />
               </div>
             </div>
           ))}
@@ -394,6 +447,10 @@ export default function LandingPage() {
       q: "¿Qué pasa si pruebo y no me convence?",
       a: "Tienes 14 días de garantía completa. Si después de tu Primera Revelación sientes que no fue para ti, te regresamos el dinero sin preguntas. Confiamos en que lo que descubras en los primeros minutos ya va a valer el intento.",
     },
+    {
+      q: "¿Vale la pena si ya pago otras suscripciones?",
+      a: "$7.49 al mes es menos de $0.25 al día — menos que el café de camino al trabajo, menos que el libro de finanzas que dejaste a la mitad. La diferencia real es que esto trabaja la raíz del bloqueo, no el síntoma. Y si en 14 días sientes que no fue para ti, te regresamos cada centavo.",
+    },
   ];
 
   return (
@@ -524,6 +581,14 @@ export default function LandingPage() {
             </h2>
           </Reveal>
 
+          {/* FIX: escena concreta del dolor (FICHA-AVATAR — momento de crisis exacto) */}
+          <Reveal delay={0.08}>
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--text-secondary)", fontStyle: "italic" }}>
+              Domingo por la noche. Abres el banco. Otra vez salió más de lo que entró.
+              No sabes cómo pasó. Te da vergüenza. Y en silencio te preguntas: ¿qué hago mal?
+            </p>
+          </Reveal>
+
           <div className="mt-8 flex flex-col gap-4">
             {painPoints.map((item, i) => (
               <Reveal key={i} delay={i * 0.07}>
@@ -569,9 +634,10 @@ export default function LandingPage() {
               <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
                 Costo estimado del patrón emocional sin resolver
               </p>
+              {/* FIX baseline #2: count-up animation al entrar en viewport */}
               <div className="mt-2 flex items-end gap-1">
                 <span className="font-display text-4xl font-bold" style={{ color: "var(--brand-primary)" }}>
-                  $9,600
+                  <AnimatedCounter target={9600} prefix="$" />
                 </span>
                 <span className="mb-1 text-sm" style={{ color: "var(--text-secondary)" }}>
                   &nbsp;/ año
@@ -861,6 +927,7 @@ export default function LandingPage() {
                 )}
               </AnimatePresence>
 
+              {/* FIX baseline #2: precio anima al entrar + al cambiar plan */}
               <div className="flex items-end gap-1">
                 <AnimatePresence mode="wait">
                   <motion.span
@@ -872,7 +939,7 @@ export default function LandingPage() {
                     className="font-display text-4xl font-bold"
                     style={{ color: "var(--text-primary)" }}
                   >
-                    ${billing === "annual" ? "4.99" : "7.49"}
+                    $<AnimatedNumber value={billing === "annual" ? 4.99 : 7.49} decimals={2} />
                   </motion.span>
                 </AnimatePresence>
                 <span className="mb-1 text-sm" style={{ color: "var(--text-muted)" }}>/mes</span>
@@ -912,8 +979,11 @@ export default function LandingPage() {
                   <ArrowRight weight="bold" size={18} />
                 </motion.button>
               </Link>
+              {/* FIX §6: nota de cobro específica por plan (evita confusión $4.99 vs $59.99) */}
               <p className="mt-3 text-center text-xs" style={{ color: "var(--text-muted)" }}>
-                El cobro inicia al día 8 si decides quedarte
+                {billing === "annual"
+                  ? "Al día 8 se carga $59.99 (año completo) si decides quedarte"
+                  : "Al día 8 se carga $7.49/mes si decides quedarte"}
               </p>
             </div>
           </Reveal>
