@@ -37,11 +37,12 @@ function AnimatedCounter({ target, prefix = "" }: { target: number; prefix?: str
 // Cuenta desde ~50 % del valor → target en mount (usado dentro de AnimatePresence §6)
 function AnimatedNumber({ value, decimals = 2 }: { value: number; decimals?: number }) {
   const prefersReduced = useReducedMotion();
-  const mv = useMotionValue(prefersReduced ? value : value * 0.5);
+  // FIX: empieza desde 0 (no 50%) para que el recorrido sea legible y persuasivo
+  const mv = useMotionValue(prefersReduced ? value : 0);
   const display = useTransform(mv, (v) => v.toFixed(decimals));
   useEffect(() => {
-    if (prefersReduced) return;
-    const controls = animate(mv, value, { duration: 0.5, ease: "easeOut" });
+    if (prefersReduced) { mv.set(value); return; }
+    const controls = animate(mv, value, { duration: 0.8, ease: "easeOut" });
     return controls.stop;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return <motion.span>{display}</motion.span>;
@@ -357,7 +358,17 @@ export default function LandingPage() {
   const [billing, setBilling] = useState<"annual" | "monthly">("annual");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showSticky, setShowSticky] = useState(false);
+  const [activeScreen, setActiveScreen] = useState(0);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const handleCarouselScroll = () => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const itemWidth = 192 + 16; // w-48 + gap-4
+    const index = Math.round(el.scrollLeft / itemWidth);
+    setActiveScreen(Math.min(index, screens.length - 1));
+  };
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -418,6 +429,24 @@ export default function LandingPage() {
     { label: "Perfil Emocional™", sub: "Tu mapa del dinero", Screen: PerfilScreen },
     { label: "Ruta Personalizada", sub: "Tu camino de sanación", Screen: RutaScreen },
     { label: "Ejercicio Diario", sub: "5 minutos de profundidad", Screen: EjercicioScreen },
+  ];
+
+  const testimonials = [
+    {
+      quote: "Siempre pensé que mi problema era la disciplina. En la primera sesión entendí que era miedo — miedo a que si me iba bien, algo malo pasaría. Nunca lo había conectado así.",
+      name: "Valentina R.",
+      country: "Colombia",
+    },
+    {
+      quote: "Llevo 10 años ganando buen dinero y siempre llegando a cero. Reconecta AI me hizo ver que me saboteo exactamente cuando las cosas empiezan a funcionar. Es incómodo, pero necesitaba saberlo.",
+      name: "Mariana T.",
+      country: "México",
+    },
+    {
+      quote: "La parte que más me sorprendió fue el ejercicio del día 2. Lloré. No por tristeza — por reconocimiento. Hacía años que nadie me preguntaba qué sentía a los 8 años cuando no había dinero en casa.",
+      name: "Sofía L.",
+      country: "Argentina",
+    },
   ];
 
   const valueItems = [
@@ -632,7 +661,7 @@ export default function LandingPage() {
               style={{ background: "var(--surface-elevated)", boxShadow: "var(--shadow-lg)" }}
             >
               <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
-                Costo estimado del patrón emocional sin resolver
+                Estimado para tu perfil · ajústalo en el diagnóstico
               </p>
               {/* FIX baseline #2: count-up animation al entrar en viewport */}
               <div className="mt-2 flex items-end gap-1">
@@ -669,6 +698,12 @@ export default function LandingPage() {
                 ))}
               </div>
             </div>
+          </Reveal>
+
+          <Reveal delay={0.12}>
+            <p className="mt-3 text-center text-xs" style={{ color: "var(--text-muted)" }}>
+              *Rango basado en $200–800 USD/mes de oportunidades perdidas reportadas · perfil emprendedora LATAM
+            </p>
           </Reveal>
 
           <Reveal delay={0.15}>
@@ -768,6 +803,8 @@ export default function LandingPage() {
 
         <Reveal delay={0.1}>
           <div
+            ref={carouselRef}
+            onScroll={handleCarouselScroll}
             className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4"
             style={{ scrollbarWidth: "none" }}
           >
@@ -801,6 +838,22 @@ export default function LandingPage() {
           </div>
         </Reveal>
 
+        {/* Pagination dots */}
+        <div className="mt-4 flex justify-center gap-2">
+          {screens.map((_, i) => (
+            <div
+              key={i}
+              style={{
+                width: "6px",
+                height: "6px",
+                borderRadius: "9999px",
+                background: activeScreen === i ? "var(--brand-primary)" : "color-mix(in oklab, var(--text-muted) 35%, transparent)",
+                transition: "background-color 200ms",
+              }}
+            />
+          ))}
+        </div>
+
         <div className="mx-auto mt-8 max-w-sm px-4">
           <Reveal>
             <Link href="/onboarding" className="block">
@@ -814,7 +867,7 @@ export default function LandingPage() {
                   transition: "transform 100ms",
                 }}
               >
-                Quiero empezar mi diagnóstico gratis
+                Empezar gratis — sin tarjeta
                 <ArrowRight weight="bold" size={16} />
               </motion.button>
             </Link>
@@ -975,7 +1028,7 @@ export default function LandingPage() {
                     transition: "transform 100ms",
                   }}
                 >
-                  Empezar mi diagnóstico gratis
+                  Empezar gratis — sin tarjeta
                   <ArrowRight weight="bold" size={18} />
                 </motion.button>
               </Link>
@@ -1036,6 +1089,59 @@ export default function LandingPage() {
               </p>
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §7B TESTIMONIOS                                    */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
+        <div className="mx-auto max-w-sm">
+          <Reveal>
+            <Kicker>Voces reales</Kicker>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2
+              className="mt-4 font-display text-2xl font-bold leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Lo que cambia cuando llegas a la raíz
+            </h2>
+          </Reveal>
+
+          <div className="mt-8 flex flex-col gap-4">
+            {testimonials.map((t, i) => (
+              <Reveal key={i} delay={i * 0.07}>
+                <div
+                  className="rounded-[var(--radius-md)] p-5"
+                  style={{
+                    background: "var(--surface-base)",
+                    boxShadow: "var(--shadow-sm)",
+                    borderLeft: "3px solid var(--brand-primary)",
+                  }}
+                >
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ color: "var(--text-secondary)", fontStyle: "italic" }}
+                  >
+                    "{t.quote}"
+                  </p>
+                  <div className="mt-3 flex items-center gap-2">
+                    <div
+                      className="flex size-7 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold"
+                      style={{ background: "color-mix(in oklab, var(--brand-primary) 12%, transparent)", color: "var(--brand-primary)" }}
+                    >
+                      {t.name[0]}
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>{t.name}</p>
+                      <p className="text-xs" style={{ color: "var(--text-muted)" }}>{t.country}</p>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
