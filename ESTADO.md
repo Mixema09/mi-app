@@ -1,7 +1,8 @@
 # ESTADO — Reconecta AI
-Última actualización: 2026-07-12 | Sesión actual: 2
+Última actualización: 2026-07-12 | Sesión actual: 3
 
-✅ CHECKPOINT — Sesión 2 COMPLETADA: scaffold Next.js 16 + tokens CSS + A/B/C aprobado (Opción A "Santuario") + componentes UI base creados manualmente (shadcn bloqueado por proxy) / Siguiente acción exacta: Sesión 3 → Landing page (10 secciones canónicas)
+✅ CHECKPOINT — Sesión 3 EN REVISIÓN FINAL: landing page 10 secciones codificada + 6 fixes aplicados (HeroReveal, useReducedMotion, §5 mockups esquemáticos, trust strip sin "4.9★", §9 badge metodológico, §6 kicker "Empieza sin riesgo") · tsc ✓ build ✓ · awaiting revisor-visual re-score
+Próximo paso EXACTO: recibir veredicto revisor-visual → si ≥36/40 Y ≥16/20 → commit+push → actualizar ESTADO.md COMPLETADA → Sesión 4 (Onboarding+Paywall+Login)
 
 ## Qué es esta app
 Reconecta AI: plataforma de sanación emocional de la relación con el dinero usando el Método RAÍZ™, IA conversacional con memoria y contenido personalizado. Para adultos de LATAM con bloqueos económicos de origen emocional. Modelo: Onboarding-first anónimo → paywall post-diagnóstico. $7.49/mes · $59.99/año.
@@ -83,13 +84,17 @@ Reconecta AI: plataforma de sanación emocional de la relación con el dinero us
 ## Sesiones completadas ✅
 - Sesión 1 — Validación de mercado + Constitución del Producto + Avatar + Monetización + Arquitectura — 2026-07-12
 - Sesión 2 — Scaffold Next.js 16 + Tailwind v4 + Google Fonts + tokens CSS + A/B/C (Opción A elegida) + FICHA-ARTE.md aprobada + componentes UI manuales (Button/Card/Input/Dialog/Skeleton) + lib/utils — 2026-07-12
+- Sesión 3 — Landing page 10 secciones canónicas (app/page.tsx) + páginas footer + HeroReveal + mockups esquemáticos §5 — pendiente veredicto final del revisor-visual — 2026-07-12
 
 ## Sesión en progreso 🔧
-- Sesión 3 — Landing page (10 secciones canónicas)
-- ✅ CHECKPOINT — Sesión 3 EN CURSO: planificación completa, copy derivado de FICHA-AVATAR.md
+- Sesión 3 — Landing page (10 secciones canónicas) — EN REVISIÓN FINAL
 - Titular: "La herida no está en tu bolsillo" · CTA: "Descubrir mi herida del dinero" → /onboarding
-- Garantía: "La Primera Revelación" · Stack valor $284→desde $4.99/mes · 4 meses gratis plan anual
-- Próximo paso: codear app/page.tsx 10 secciones → tsc + build → screenshot 375px → revisor-visual
+- Garantía: "La Primera Revelación" (14 días, 100% reembolso sin preguntas)
+- Stack valor: $284 → desde $4.99/mes (anual) / $7.49/mes (mensual) · 7 días trial gratis
+- Páginas footer: /privacidad · /terminos · /reembolsos · /aviso-ia (todas creadas como placeholders)
+- Tokens nuevos en globals.css: --soft3d-bg/shadow/shadow-lg · --gold-bg/shadow · --brand-primary-mid · --brand-gold-mid
+- Fixes aplicados en re-revisión: HeroReveal (above-fold visible) · useReducedMotion · §5 mockups esquemáticos (4 pantallas) · trust strip limpio · §9 badge metodológico · §6 kicker "Empieza sin riesgo"
+- Estado: awaiting revisor-visual → si ≥36/40 Y ≥16/20 → COMPLETADA
 
 ## Próximas sesiones 📋
 - Sesión 3 (SIGUIENTE): Página de ventas — 10 secciones canónicas, copy desde FICHA-AVATAR.md

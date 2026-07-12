@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useInView } from "motion/react";
+import { motion, AnimatePresence, useInView, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import {
   Heart,
@@ -12,15 +12,194 @@ import {
   CurrencyDollar,
   Star,
   ArrowRight,
-  MagnifyingGlass,
-  Eye,
-  Pencil,
-  ChatCircle,
-  Path,
 } from "@phosphor-icons/react";
+
+// ─── Schematic app mockups (§5 + hero) ────────────────────
+
+function DiagnosticoScreen() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", background: "var(--surface-base)", overflow: "hidden" }}>
+      <div style={{ padding: "8px 10px 6px", background: "var(--surface-elevated)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "9px", color: "var(--brand-primary)" }}>ReconectaAI</span>
+        <div style={{ display: "flex", gap: "3px" }}>
+          {[1, 2, 3, 4].map((j) => (
+            <div key={j} style={{ width: j === 1 ? "14px" : "6px", height: "3px", borderRadius: "9999px", background: j === 1 ? "var(--brand-primary)" : "color-mix(in oklab, var(--text-muted) 30%, transparent)" }} />
+          ))}
+        </div>
+      </div>
+      <div style={{ padding: "10px", display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+        <div>
+          <span style={{ fontSize: "6px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-muted)" }}>DIAGNÓSTICO · PASO 1 DE 4</span>
+          <p style={{ marginTop: "4px", fontSize: "8px", fontWeight: 700, lineHeight: 1.35, color: "var(--text-primary)" }}>¿Cuándo sentiste por primera vez que el dinero era escaso?</p>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          {[
+            { label: "En la infancia", selected: true },
+            { label: "En la adolescencia", selected: false },
+            { label: "Al independizarme", selected: false },
+          ].map((opt, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "6px 8px", borderRadius: "8px", background: opt.selected ? "color-mix(in oklab, var(--brand-primary) 10%, transparent)" : "var(--surface-elevated)", border: `1px solid ${opt.selected ? "var(--brand-primary)" : "color-mix(in oklab, var(--text-muted) 25%, transparent)"}` }}>
+              <div style={{ width: "10px", height: "10px", borderRadius: "9999px", flexShrink: 0, border: `1.5px solid ${opt.selected ? "var(--brand-primary)" : "var(--text-muted)"}`, background: opt.selected ? "var(--brand-primary)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {opt.selected && <div style={{ width: "4px", height: "4px", borderRadius: "9999px", background: "var(--surface-elevated)" }} />}
+              </div>
+              <span style={{ fontSize: "7px", fontWeight: opt.selected ? 600 : 400, color: opt.selected ? "var(--brand-primary)" : "var(--text-secondary)" }}>{opt.label}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: "auto" }}>
+          <div style={{ padding: "7px", borderRadius: "9999px", textAlign: "center", background: "var(--brand-primary)", color: "var(--surface-elevated)", fontSize: "7px", fontWeight: 700 }}>
+            Continuar →
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PerfilScreen() {
+  const bars = [
+    { label: "Miedo a la escasez", pct: 78, varColor: "var(--brand-primary)" },
+    { label: "Culpa al gastar", pct: 65, varColor: "var(--brand-gold)" },
+    { label: "Bloqueo al recibir", pct: 42, varColor: "var(--brand-primary-mid)" },
+    { label: "Autoboicot financiero", pct: 55, varColor: "var(--text-secondary)" },
+  ];
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", background: "var(--surface-base)", overflow: "hidden" }}>
+      <div style={{ padding: "8px 10px 6px", background: "var(--surface-elevated)" }}>
+        <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "9px", color: "var(--brand-primary)" }}>ReconectaAI</span>
+      </div>
+      <div style={{ padding: "10px", display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+        <div>
+          <span style={{ fontSize: "6px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-muted)" }}>PERFIL EMOCIONAL™</span>
+          <p style={{ marginTop: "3px", fontSize: "9px", fontWeight: 700, color: "var(--text-primary)" }}>Tu mapa del dinero</p>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+          {bars.map((bar, i) => (
+            <div key={i}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
+                <span style={{ fontSize: "6px", color: "var(--text-secondary)" }}>{bar.label}</span>
+                <span style={{ fontSize: "6.5px", fontWeight: 700, color: bar.varColor }}>{bar.pct}%</span>
+              </div>
+              <div style={{ height: "4px", borderRadius: "9999px", background: "color-mix(in oklab, var(--text-muted) 20%, transparent)", overflow: "hidden" }}>
+                <div style={{ width: `${bar.pct}%`, height: "100%", background: bar.varColor, borderRadius: "inherit" }} />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: "auto", padding: "8px", borderRadius: "8px", background: "color-mix(in oklab, var(--brand-primary) 8%, transparent)", border: "1px solid color-mix(in oklab, var(--brand-primary) 22%, transparent)" }}>
+          <span style={{ fontSize: "6px", fontWeight: 700, color: "var(--brand-primary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>HERIDA RAÍZ</span>
+          <p style={{ marginTop: "3px", fontSize: "7px", color: "var(--text-secondary)", lineHeight: 1.4 }}>Miedo a la escasez formado en la infancia por inseguridad económica familiar.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RutaScreen() {
+  const steps = [
+    { day: "DÍA 1", title: "La herida de escasez", state: "done" },
+    { day: "DÍA 2", title: "El niño que sobrevivió", state: "done" },
+    { day: "DÍA 3", title: "Romper el pacto", state: "active" },
+    { day: "DÍA 4", title: "La nueva narrativa", state: "locked" },
+    { day: "DÍA 5", title: "Zona de merecimiento", state: "locked" },
+  ] as const;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", background: "var(--surface-base)", overflow: "hidden" }}>
+      <div style={{ padding: "8px 10px 6px", background: "var(--surface-elevated)" }}>
+        <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "9px", color: "var(--brand-primary)" }}>ReconectaAI</span>
+      </div>
+      <div style={{ padding: "10px", display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+        <div>
+          <span style={{ fontSize: "6px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-muted)" }}>RUTA PERSONALIZADA</span>
+          <p style={{ marginTop: "3px", fontSize: "9px", fontWeight: 700, color: "var(--text-primary)" }}>Tu camino de sanación</p>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          {steps.map((step, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: "7px", padding: "7px 8px", borderRadius: "8px", background: step.state === "active" ? "color-mix(in oklab, var(--brand-primary) 10%, transparent)" : step.state === "done" ? "var(--surface-elevated)" : "var(--surface-sunken)", border: `1px solid ${step.state === "active" ? "var(--brand-primary)" : "color-mix(in oklab, var(--text-muted) 18%, transparent)"}` }}>
+              <div style={{ width: "14px", height: "14px", borderRadius: "9999px", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: step.state === "done" ? "var(--brand-primary)" : step.state === "active" ? "color-mix(in oklab, var(--brand-primary) 15%, transparent)" : "color-mix(in oklab, var(--text-muted) 20%, transparent)", border: step.state === "active" ? "1.5px solid var(--brand-primary)" : "none" }}>
+                {step.state === "done" ? (
+                  <svg width="7" height="5" viewBox="0 0 7 5" fill="none">
+                    <path d="M0.5 2.5L2.5 4.5L6.5 0.5" stroke="var(--surface-elevated)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ) : (
+                  <div style={{ width: "4px", height: "4px", borderRadius: "9999px", background: step.state === "active" ? "var(--brand-primary)" : "var(--text-muted)", opacity: step.state === "locked" ? 0.4 : 1 }} />
+                )}
+              </div>
+              <div>
+                <span style={{ fontSize: "5.5px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--text-muted)" }}>{step.day}</span>
+                <p style={{ fontSize: "7px", fontWeight: step.state === "active" ? 600 : 400, color: step.state === "active" ? "var(--brand-primary)" : step.state === "done" ? "var(--text-primary)" : "var(--text-muted)" }}>{step.title}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EjercicioScreen() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", width: "100%", background: "var(--surface-base)", overflow: "hidden" }}>
+      <div style={{ padding: "8px 10px 6px", background: "var(--surface-elevated)" }}>
+        <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "9px", color: "var(--brand-primary)" }}>ReconectaAI</span>
+      </div>
+      <div style={{ padding: "10px", display: "flex", flexDirection: "column", gap: "6px", flex: 1 }}>
+        <span style={{ fontSize: "6px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-muted)" }}>EJERCICIO · DÍA 3</span>
+        {/* IA bubble */}
+        <div style={{ maxWidth: "88%", padding: "7px 9px", borderRadius: "12px 12px 12px 2px", background: "var(--surface-elevated)" }}>
+          <p style={{ fontSize: "6.5px", lineHeight: 1.45, color: "var(--text-secondary)" }}>¿Qué sentías a los 8 años cuando no había suficiente dinero en casa?</p>
+        </div>
+        {/* Usuario */}
+        <div style={{ maxWidth: "82%", alignSelf: "flex-end", padding: "7px 9px", borderRadius: "12px 12px 2px 12px", background: "var(--brand-primary)" }}>
+          <p style={{ fontSize: "6.5px", lineHeight: 1.45, color: "var(--surface-elevated)" }}>Miedo. Y que dependía de portarme bien.</p>
+        </div>
+        {/* IA bubble 2 */}
+        <div style={{ maxWidth: "88%", padding: "7px 9px", borderRadius: "12px 12px 12px 2px", background: "var(--surface-elevated)" }}>
+          <p style={{ fontSize: "6.5px", lineHeight: 1.45, color: "var(--text-secondary)" }}>Eso se llama seguridad condicionada. Vamos a trabajar eso juntos...</p>
+        </div>
+        {/* Indicador de escritura */}
+        <div style={{ marginTop: "auto" }}>
+          <div style={{ display: "inline-flex", gap: "3px", alignItems: "center", padding: "5px 8px", borderRadius: "9999px", background: "var(--surface-elevated)" }}>
+            {[0, 1, 2].map((j) => (
+              <div key={j} style={{ width: "3px", height: "3px", borderRadius: "9999px", background: "var(--text-muted)", opacity: 0.4 + j * 0.2 }} />
+            ))}
+          </div>
+        </div>
+        {/* Input */}
+        <div style={{ padding: "7px 10px", borderRadius: "9999px", background: "var(--surface-elevated)", border: "1px solid color-mix(in oklab, var(--brand-primary) 25%, transparent)" }}>
+          <p style={{ fontSize: "6.5px", color: "var(--text-muted)" }}>Escribe tu respuesta...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ─── Primitives ────────────────────────────────────────────
 
+// FIX 1 + 2: HeroReveal — anima en mount (no useInView); respeta prefers-reduced-motion
+function HeroReveal({
+  children,
+  delay = 0,
+  className,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const prefersReduced = useReducedMotion();
+  return (
+    <motion.div
+      initial={prefersReduced ? false : { opacity: 0, y: 20 }}
+      animate={prefersReduced ? {} : { opacity: 1, y: 0 }}
+      transition={prefersReduced ? {} : { duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// FIX 2: Reveal — añade useReducedMotion; useInView para elementos below-the-fold
 function Reveal({
   children,
   delay = 0,
@@ -32,12 +211,13 @@ function Reveal({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-8%" });
+  const prefersReduced = useReducedMotion();
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+      initial={prefersReduced ? false : { opacity: 0, y: 24 }}
+      animate={prefersReduced ? {} : (isInView ? { opacity: 1, y: 0 } : {})}
+      transition={prefersReduced ? {} : { duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
       {children}
@@ -80,7 +260,6 @@ function CustomCheck() {
   );
 }
 
-// Blob: all positioning via inline style (decorative — no scale constraint)
 function Blob({
   color = "primary",
   style,
@@ -104,7 +283,6 @@ function Blob({
   );
 }
 
-// Soft-3D icon container — icons inherit color: surface-elevated
 function Soft3DIcon({ children }: { children: React.ReactNode }) {
   return (
     <div
@@ -112,21 +290,6 @@ function Soft3DIcon({ children }: { children: React.ReactNode }) {
       style={{
         background: "var(--soft3d-bg)",
         boxShadow: "var(--soft3d-shadow)",
-        color: "var(--surface-elevated)",
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function Soft3DIconLg({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      className="flex size-16 shrink-0 items-center justify-center rounded-2xl"
-      style={{
-        background: "var(--soft3d-bg)",
-        boxShadow: "var(--soft3d-shadow-lg)",
         color: "var(--surface-elevated)",
       }}
     >
@@ -196,11 +359,12 @@ export default function LandingPage() {
     },
   ];
 
+  // FIX 3: componentes esquemáticos en lugar de placeholders dashed
   const screens = [
-    { label: "Diagnóstico", sub: "Descubre tu herida raíz", icon: <MagnifyingGlass weight="duotone" size={28} /> },
-    { label: "Perfil Emocional™", sub: "Tu mapa del dinero", icon: <Eye weight="duotone" size={28} /> },
-    { label: "Ruta Personalizada", sub: "Tu camino de sanación", icon: <Path weight="duotone" size={28} /> },
-    { label: "Ejercicio Diario", sub: "5 minutos de profundidad", icon: <ChatCircle weight="duotone" size={28} /> },
+    { label: "Diagnóstico", sub: "Descubre tu herida raíz", Screen: DiagnosticoScreen },
+    { label: "Perfil Emocional™", sub: "Tu mapa del dinero", Screen: PerfilScreen },
+    { label: "Ruta Personalizada", sub: "Tu camino de sanación", Screen: RutaScreen },
+    { label: "Ejercicio Diario", sub: "5 minutos de profundidad", Screen: EjercicioScreen },
   ];
 
   const valueItems = [
@@ -253,11 +417,12 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          <Reveal>
+          {/* FIX 1: HeroReveal para elementos above-the-fold */}
+          <HeroReveal>
             <Kicker>Método RAÍZ™ · Solo en español</Kicker>
-          </Reveal>
+          </HeroReveal>
 
-          <Reveal delay={0.06}>
+          <HeroReveal delay={0.06}>
             <h1
               className="mt-4 font-display font-bold leading-[1.12] tracking-tight"
               style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", color: "var(--text-primary)" }}
@@ -267,16 +432,16 @@ export default function LandingPage() {
                 en&nbsp;tu bolsillo
               </em>
             </h1>
-          </Reveal>
+          </HeroReveal>
 
-          <Reveal delay={0.1}>
+          <HeroReveal delay={0.1}>
             <p className="mt-4 text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
               Millones en LATAM trabajan duro, pero el dinero siempre se va. No es disciplina lo
               que falta — es sanar la raíz emocional que bloquea tu abundancia.
             </p>
-          </Reveal>
+          </HeroReveal>
 
-          <Reveal delay={0.14}>
+          <HeroReveal delay={0.14}>
             <div id="hero-cta-sentinel" ref={sentinelRef} className="mt-8">
               <Link href="/onboarding" className="block">
                 <motion.button
@@ -297,47 +462,30 @@ export default function LandingPage() {
                 Gratis · 5 minutos · Sin tarjeta
               </p>
             </div>
-          </Reveal>
+          </HeroReveal>
 
-          {/* 9:16 app visual placeholder */}
-          <Reveal delay={0.18}>
+          {/* FIX hero visual: mockup esquemático real en lugar de dashed placeholder */}
+          <HeroReveal delay={0.18}>
             <div
-              className="mx-auto mt-10 flex flex-col items-center justify-center gap-3 rounded-[var(--radius-lg)] border-2 border-dashed p-8"
+              className="mx-auto mt-10 overflow-hidden"
               style={{
-                width: "200px",
+                width: "190px",
                 aspectRatio: "9 / 16",
-                borderColor: "color-mix(in oklab, var(--brand-primary) 28%, transparent)",
-                background: "color-mix(in oklab, var(--brand-primary) 4%, var(--surface-elevated))",
+                borderRadius: "var(--radius-lg)",
+                boxShadow: "var(--shadow-lg), 0 0 0 1.5px color-mix(in oklab, var(--brand-primary) 20%, transparent)",
               }}
             >
-              <div
-                className="flex size-14 items-center justify-center rounded-2xl"
-                style={{
-                  background: "var(--soft3d-bg)",
-                  boxShadow: "var(--soft3d-shadow-lg)",
-                  color: "var(--surface-elevated)",
-                }}
-              >
-                <Heart weight="duotone" size={28} />
-              </div>
-              <div className="text-center">
-                <p className="text-xs font-semibold" style={{ color: "var(--brand-primary)" }}>
-                  App preview
-                </p>
-                <p className="mt-0.5 text-xs" style={{ color: "var(--text-muted)" }}>
-                  próximamente
-                </p>
-              </div>
+              <DiagnosticoScreen />
             </div>
-          </Reveal>
+          </HeroReveal>
 
-          {/* Trust strip */}
-          <Reveal delay={0.22}>
+          {/* FIX 4 (trust strip): sin "4.9★" — copy verificable */}
+          <HeroReveal delay={0.22}>
             <div className="mt-10 flex items-start justify-center">
               {[
-                { n: "4.9★", label: "valoración" },
-                { n: "Español", label: "LATAM" },
-                { n: "7 días", label: "trial gratis" },
+                { n: "Solo", label: "en español" },
+                { n: "7 días", label: "gratis" },
+                { n: "14 días", label: "garantía" },
               ].map((item, i) => (
                 <div
                   key={item.n}
@@ -355,7 +503,7 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
-          </Reveal>
+          </HeroReveal>
         </div>
       </section>
 
@@ -535,7 +683,7 @@ export default function LandingPage() {
       </section>
 
       {/* ──────────────────────────────────────────────────── */}
-      {/* §5  CARRUSEL DE PANTALLAS                          */}
+      {/* §5  CARRUSEL DE PANTALLAS — mockups esquemáticos   */}
       {/* ──────────────────────────────────────────────────── */}
       <section className="overflow-hidden py-16">
         <div className="mx-auto max-w-sm px-4">
@@ -554,40 +702,35 @@ export default function LandingPage() {
 
         <Reveal delay={0.1}>
           <div
-            className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2"
+            className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4"
             style={{ scrollbarWidth: "none" }}
           >
-            {screens.map((screen, i) => (
-              <div
-                key={i}
-                className="w-48 shrink-0 snap-center"
-              >
-                <div
-                  className="flex h-full flex-col items-center justify-center gap-4 rounded-[var(--radius-lg)] border-2 border-dashed p-6"
-                  style={{
-                    aspectRatio: "9 / 16",
-                    borderColor: "color-mix(in oklab, var(--brand-primary) 25%, transparent)",
-                    background: "color-mix(in oklab, var(--brand-primary) 4%, var(--surface-elevated))",
-                  }}
-                >
-                  <Soft3DIconLg>{screen.icon}</Soft3DIconLg>
+            {screens.map((screen, i) => {
+              const Screen = screen.Screen;
+              return (
+                <div key={i} className="flex w-48 shrink-0 snap-center flex-col gap-2">
+                  <div
+                    style={{
+                      aspectRatio: "9 / 16",
+                      overflow: "hidden",
+                      borderRadius: "var(--radius-lg)",
+                      boxShadow: "var(--shadow-lg)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Screen />
+                  </div>
                   <div className="text-center">
                     <p className="font-display text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                       {screen.label}
                     </p>
-                    <p className="mt-1 text-xs" style={{ color: "var(--text-muted)" }}>
+                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                       {screen.sub}
                     </p>
                   </div>
-                  <div
-                    className="rounded-full px-3 py-1 text-xs font-medium"
-                    style={{ background: "var(--brand-primary-light)", color: "var(--brand-primary)" }}
-                  >
-                    Próximamente
-                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             <div className="w-4 shrink-0" />
           </div>
         </Reveal>
@@ -618,8 +761,9 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────── */}
       <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
         <div className="mx-auto max-w-sm">
+          {/* FIX 6: kicker sin "Inversión" (prohibido en avatar) */}
           <Reveal>
-            <Kicker>Inversión en ti</Kicker>
+            <Kicker>Empieza sin riesgo</Kicker>
           </Reveal>
           <Reveal delay={0.05}>
             <h2
@@ -897,6 +1041,7 @@ export default function LandingPage() {
         <Blob style={{ right: "-10%", bottom: "-10%", width: "300px", height: "300px", opacity: 0.15 }} />
 
         <div className="relative mx-auto max-w-sm text-center">
+          {/* FIX 5: badge §9 — afirmación metodológica, no social proof fabricado */}
           <Reveal>
             <div
               className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full px-4 py-2"
@@ -907,7 +1052,7 @@ export default function LandingPage() {
             >
               <Star weight="fill" size={13} color="var(--brand-gold)" />
               <span className="text-xs font-semibold" style={{ color: "var(--brand-gold)" }}>
-                Más de 1,000 personas en LATAM ya están en camino
+                Basado en psicología terapéutica del niño interior
               </span>
             </div>
           </Reveal>
