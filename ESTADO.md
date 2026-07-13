@@ -1,9 +1,9 @@
 # ESTADO — Reconecta AI
-Última actualización: 2026-07-12 | Sesión actual: 3
+Última actualización: 2026-07-13 | Sesión actual: 4
 
-🔧 CHECKPOINT — Sesión 3 R9 EN REVISIÓN: 5 fixes quirúrgicos sobre R8 (§4B→surface-base restaura ritmo, §6 checklist→Diagnóstico+Perfil™+Ruta, §3B blob opacity 0.32+blur4px, §5 CTA outline→"Empezar mi diagnóstico gratuito"+py-3, §2 cards numeradas 01-04+borderLeft card1) · tsc ✓ build ✓ · screenshot /tmp/r9-landing.png · awaiting revisor-visual R9
-Scores previos: R5 31/40·16/20·18/20 | R6 30/40·15/20·18/20 | R7 33/40·16/20·18/20 | R8 31/40·15/20·18/20 (regresión §4B→elevated)
-Próximo paso EXACTO: recibir veredicto R9 → si ≥36/40 Y ≥16/20 Y ≥16/20 → commit+push → COMPLETADA → Sesión 4
+✅ Sesión 3 CERRADA — Landing pausada por decisión del usuario. Score final: 30/40·15/20·18/20 (11 rondas). Tag git: landing-v1-stable (commit 38c2f35). Pulido fino diferido a Sesión 7. NO retocar landing hasta solicitud explícita.
+🔧 CHECKPOINT ACTIVO — Sesión 4 EN PROGRESO: Onboarding diagnóstico multi-paso → Paywall (Perfil Emocional™) → Login UI
+Próximo paso EXACTO: construir /onboarding (flujo diagnóstico) → /paywall → /login — UI-first sin backend (Supabase/Claude API en Sesión 6)
 
 ## Qué es esta app
 Reconecta AI: plataforma de sanación emocional de la relación con el dinero usando el Método RAÍZ™, IA conversacional con memoria y contenido personalizado. Para adultos de LATAM con bloqueos económicos de origen emocional. Modelo: Onboarding-first anónimo → paywall post-diagnóstico. $7.49/mes · $59.99/año.
@@ -85,17 +85,14 @@ Reconecta AI: plataforma de sanación emocional de la relación con el dinero us
 ## Sesiones completadas ✅
 - Sesión 1 — Validación de mercado + Constitución del Producto + Avatar + Monetización + Arquitectura — 2026-07-12
 - Sesión 2 — Scaffold Next.js 16 + Tailwind v4 + Google Fonts + tokens CSS + A/B/C (Opción A elegida) + FICHA-ARTE.md aprobada + componentes UI manuales (Button/Card/Input/Dialog/Skeleton) + lib/utils — 2026-07-12
-- Sesión 3 — Landing page 10 secciones canónicas (app/page.tsx) + páginas footer + HeroReveal + mockups esquemáticos §5 — pendiente veredicto final del revisor-visual — 2026-07-12
+- Sesión 3 — Landing page 10 secciones (app/page.tsx) PAUSADA · score 30/40·15/20·18/20 · tag landing-v1-stable · pulido Sesión 7 — 2026-07-13
 
 ## Sesión en progreso 🔧
-- Sesión 3 — Landing page (10 secciones canónicas) — EN REVISIÓN FINAL
-- Titular: "La herida no está en tu bolsillo" · CTA: "Descubrir mi herida del dinero" → /onboarding
-- Garantía: "La Primera Revelación" (14 días, 100% reembolso sin preguntas)
-- Stack valor: $284 → desde $4.99/mes (anual) / $7.49/mes (mensual) · 7 días trial gratis
-- Páginas footer: /privacidad · /terminos · /reembolsos · /aviso-ia (todas creadas como placeholders)
-- Tokens nuevos en globals.css: --soft3d-bg/shadow/shadow-lg · --gold-bg/shadow · --brand-primary-mid · --brand-gold-mid
-- Fixes aplicados en re-revisión: HeroReveal (above-fold visible) · useReducedMotion · §5 mockups esquemáticos (4 pantallas) · trust strip limpio · §9 badge metodológico · §6 kicker "Empieza sin riesgo"
-- Estado: awaiting revisor-visual → si ≥36/40 Y ≥16/20 → COMPLETADA
+- Sesión 4 — Onboarding diagnóstico + Paywall + Login — EN CONSTRUCCIÓN
+- Arquitectura: UI-first con localStorage (sin Supabase/Claude API hasta Sesión 6)
+- /onboarding: flujo multi-paso (8-10 pantallas) → genera Perfil Emocional del Dinero™ → /paywall
+- /paywall: muestra Perfil + pricing $4.99/mes anual · $7.49/mes mensual · 7 días gratis → /login
+- /login: UI magic link + Google OAuth (stub visual — auth real en Sesión 6)
 
 ## Próximas sesiones 📋
 - Sesión 3 (SIGUIENTE): Página de ventas — 10 secciones canónicas, copy desde FICHA-AVATAR.md
