@@ -31,7 +31,12 @@ Stack: Next.js 16 (App Router, TypeScript, Tailwind) + Supabase (Auth + Postgres
   - Landing (`/`) con CTA a registro/login.
   - Verificado: `tsc` ✅ · `build` ✅ · smoke test (rutas 200, protección de rutas 307→/login) ✅
 
-- [ ] **Bloque 4 — Onboarding conectado a Supabase**
+- [x] **Bloque 4 — Onboarding conectado a Supabase** ✅
+  - Wizard `/onboarding` (5 dimensiones × 3 preguntas Likert + meta abierta), con barra de progreso.
+  - Server action `saveOnboardingAction` guarda en `onboarding_responses` y marca `profiles.onboarding_completed`, luego redirige a `/diagnostico`.
+  - Cabecera autenticada `AppHeader` (saludo + salir).
+  - Verificado: `tsc` ✅ · `build` ✅ · captura del wizard revisada.
+
 - [ ] **Bloque 5 — Diagnóstico + resultado personalizado**
 - [ ] **Bloque 6 — Pantalla principal + redirección**
 - [ ] **Bloque 7 — Chat IA + ruta personalizada**
