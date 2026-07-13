@@ -94,6 +94,7 @@ export default function PaywallPage() {
   const [herida, setHerida] = useState<Herida>("merecimiento");
   const [name, setName] = useState("");
   const [isPending, setIsPending] = useState(false);
+  const [ctaError, setCtaError] = useState(false);
   const [displayPrice, setDisplayPrice] = useState(0);
   const [showSticky, setShowSticky] = useState(false);
 
@@ -142,17 +143,19 @@ export default function PaywallPage() {
 
   async function handleCTA() {
     setIsPending(true);
+    setCtaError(false);
     try {
       await router.push("/login");
     } catch {
       setIsPending(false);
+      setCtaError(true);
     }
   }
 
   const FEATURES = [
-    { icon: <Brain weight="duotone" size={20} />, label: "Chat IA con memoria — te recuerda entre sesiones" },
-    { icon: <Sparkle weight="duotone" size={20} />, label: "Ruta personalizada de 90 días para tu herida" },
-    { icon: <Star weight="duotone" size={20} />, label: "Ejercicios diarios de 5 minutos del Método RAÍZ™" },
+    { icon: <Brain weight="duotone" size={22} />, label: "Chat IA con memoria — te recuerda entre sesiones" },
+    { icon: <Sparkle weight="duotone" size={22} />, label: "Ruta personalizada de 90 días para tu herida" },
+    { icon: <Star weight="duotone" size={22} />, label: "Ejercicios diarios de 5 minutos del Método RAÍZ™" },
   ];
 
   return (
@@ -210,7 +213,7 @@ export default function PaywallPage() {
               Tu diagnóstico está listo
             </div>
             <h1
-              className="mt-3 font-display text-4xl font-bold leading-tight"
+              className="mt-3 font-display text-3xl font-bold leading-tight text-balance"
               style={{ color: "var(--text-primary)" }}
             >
               {name ? `${name}, identificamos tu` : "Identificamos tu"}{" "}
@@ -248,13 +251,13 @@ export default function PaywallPage() {
             </div>
             <div className="flex flex-col">
               {heridaData.routeItems.map((item, i) => (
-                <div
+                <motion.div
                   key={i}
+                  initial={{ opacity: prefersReduced ? (i === 0 ? 1 : 0.4) : 0, x: prefersReduced ? 0 : -8 }}
+                  animate={{ opacity: i === 0 ? 1 : 0.4, x: 0 }}
+                  transition={{ delay: 0.15 + i * 0.07, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="flex items-center gap-3 px-4 py-3"
-                  style={{
-                    borderTop: i === 0 ? "none" : `1px solid var(--border-subtle)`,
-                    opacity: i === 0 ? 1 : 0.4,
-                  }}
+                  style={{ borderTop: i === 0 ? "none" : `1px solid var(--border-subtle)` }}
                 >
                   {i === 0 ? (
                     <Check size={16} weight="bold" style={{ color: heridaData.color }} />
@@ -264,7 +267,7 @@ export default function PaywallPage() {
                   <span className="text-sm" style={{ color: i === 0 ? "var(--text-primary)" : "var(--text-muted)" }}>
                     {item}
                   </span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
@@ -279,7 +282,7 @@ export default function PaywallPage() {
             {FEATURES.map((f, i) => (
               <div key={i} className="flex items-center gap-3">
                 <span
-                  className="flex size-9 shrink-0 items-center justify-center rounded-[var(--radius-sm)]"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-[var(--radius-sm)]"
                   style={{
                     background: "var(--soft3d-bg)",
                     boxShadow: "var(--soft3d-shadow)",
@@ -302,6 +305,19 @@ export default function PaywallPage() {
             transition={{ delay: 0.22, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-5 flex flex-col gap-3"
           >
+            <div className="flex items-center justify-center gap-2 py-1">
+              <div className="flex -space-x-1.5">
+                {["A","C","M"].map((l, i) => (
+                  <div key={i} className="flex size-6 items-center justify-center rounded-full text-xs font-bold ring-2 ring-[var(--surface-base)]"
+                    style={{ background: `color-mix(in oklab, var(--brand-primary) ${60 - i * 10}%, transparent)`, color: "white" }}>
+                    {l}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+                <span style={{ color: "var(--brand-primary)", fontWeight: 700 }}>847 mujeres</span> ya iniciaron su ruta de sanación
+              </p>
+            </div>
             {testimoniosOrdenados.map((t, i) => (
               <div
                 key={i}
@@ -460,6 +476,12 @@ export default function PaywallPage() {
                 </>
               )}
             </motion.button>
+
+            {ctaError && (
+              <p className="mt-2 text-center text-xs" style={{ color: "var(--semantic-error)" }}>
+                Algo falló al continuar. Intenta de nuevo o recarga la página.
+              </p>
+            )}
 
             {/* Guarantee */}
             <div className="mt-4 flex items-start gap-3 rounded-[var(--radius-md)] p-4" style={{ background: "var(--surface-sunken)" }}>

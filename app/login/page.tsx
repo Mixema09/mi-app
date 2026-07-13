@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { ArrowRight, EnvelopeSimple, Check, GoogleLogo, SpinnerGap } from "@phosphor-icons/react";
@@ -13,8 +13,15 @@ export default function LoginPage() {
   const [emailTouched, setEmailTouched] = useState(false);
   const [mode, setMode] = useState<Mode>("idle");
   const [loginMode, setLoginMode] = useState<LoginMode>("create");
+  const [resendCooldown, setResendCooldown] = useState(0);
   const prefersReduced = useReducedMotion();
   const emailRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
 
   function isValidEmail(e: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
@@ -24,9 +31,23 @@ export default function LoginPage() {
     e.preventDefault();
     if (!isValidEmail(email)) return;
     setMode("sending");
-    // Stub: Supabase magic link en Sesión 6
-    await new Promise((r) => setTimeout(r, 1200));
-    setMode("sent");
+    try {
+      // Stub: Supabase magic link en Sesión 6
+      await new Promise((r) => setTimeout(r, 1200));
+      setMode("sent");
+      setResendCooldown(30);
+    } catch {
+      setMode("error");
+    }
+  }
+
+  async function handleResend() {
+    if (resendCooldown > 0) return;
+    setResendCooldown(30);
+    try {
+      // Stub: reenvío magic link — Sesión 6
+      await new Promise((r) => setTimeout(r, 800));
+    } catch {}
   }
 
   function handleGoogle() {
@@ -129,8 +150,21 @@ export default function LoginPage() {
                     Te enviamos un link a <strong>{email}</strong>. Tócalo y entras directo — sin contraseña, sin app extra.
                   </p>
                   <button
+                    onClick={handleResend}
+                    disabled={resendCooldown > 0}
+                    className="mt-4 w-full rounded-[var(--radius-md)] py-3 text-sm font-medium"
+                    style={{
+                      background: "var(--surface-base)",
+                      border: "1.5px solid var(--border-subtle)",
+                      color: resendCooldown > 0 ? "var(--text-muted)" : "var(--text-primary)",
+                      opacity: resendCooldown > 0 ? 0.7 : 1,
+                    }}
+                  >
+                    {resendCooldown > 0 ? `¿No llegó? Reenviar en ${resendCooldown}s` : "¿No llegó? Reenviar enlace"}
+                  </button>
+                  <button
                     onClick={() => setMode("idle")}
-                    className="mt-4 text-xs"
+                    className="mt-2 text-xs"
                     style={{ color: "var(--text-muted)" }}
                   >
                     Usar otro correo
@@ -143,6 +177,7 @@ export default function LoginPage() {
                   className="flex flex-col gap-3"
                 >
                   <div className="relative">
+                    <label htmlFor="email" className="sr-only">Correo electrónico</label>
                     <div
                       className="absolute left-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-[var(--radius-sm)]"
                       style={{ background: "var(--soft3d-bg)", boxShadow: "var(--soft3d-shadow)" }}
@@ -150,6 +185,7 @@ export default function LoginPage() {
                       <EnvelopeSimple size={16} weight="duotone" color="white" />
                     </div>
                     <input
+                      id="email"
                       ref={emailRef}
                       type="email"
                       value={email}
@@ -189,13 +225,12 @@ export default function LoginPage() {
                     disabled={!isValidEmail(email) || mode === "sending"}
                     className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
                     style={{
-                      background: isValidEmail(email)
-                        ? "var(--brand-primary)"
-                        : "color-mix(in oklab, var(--brand-primary) 35%, transparent)",
+                      background: "var(--brand-primary)",
                       border: "1.5px solid transparent",
                       color: "white",
                       boxShadow: isValidEmail(email) ? "0 4px 18px rgba(224,123,64,0.28)" : "none",
-                      transition: "all 200ms",
+                      opacity: isValidEmail(email) || mode === "sending" ? 1 : 0.4,
+                      transition: "opacity 200ms, box-shadow 200ms",
                     }}
                   >
                     {mode === "sending" ? (

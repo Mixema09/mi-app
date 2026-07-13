@@ -314,10 +314,28 @@ export default function OnboardingPage() {
   const [selectedChip, setSelectedChip] = useState<string | null>(null);
   const [direction, setDirection] = useState(1);
   const [loadingPct, setLoadingPct] = useState(0);
+  const [countQ, setCountQ] = useState(0);
+  const [countM, setCountM] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const currentStep = STEPS[step];
   const pct = stepProgress(step);
+
+  // Restore from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("raiz_answers");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as Partial<Answers>;
+        if (Object.keys(parsed).length > 0) setAnswers(parsed);
+      } catch {}
+    }
+    const savedStep = localStorage.getItem("raiz_step");
+    if (savedStep) {
+      const n = parseInt(savedStep, 10);
+      if (!isNaN(n) && n > 0 && n < STEPS.length - 1) setStep(n);
+    }
+  }, []);
 
   // Persist to localStorage
   useEffect(() => {
@@ -325,6 +343,33 @@ export default function OnboardingPage() {
       localStorage.setItem("raiz_answers", JSON.stringify(answers));
     }
   }, [answers]);
+
+  useEffect(() => {
+    if (currentStep?.type !== "loading" && currentStep?.type !== "reveal") {
+      localStorage.setItem("raiz_step", String(step));
+    }
+  }, [step]);
+
+  // Count-up for welcome numbers
+  useEffect(() => {
+    if (currentStep?.type !== "welcome") return;
+    const animate = (target: number, setter: (n: number) => void, delay: number) => {
+      const t = setTimeout(() => {
+        const dur = 600;
+        const start = Date.now();
+        const tick = () => {
+          const p = Math.min((Date.now() - start) / dur, 1);
+          setter(Math.round(target * (1 - Math.pow(1 - p, 3))));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }, delay);
+      return t;
+    };
+    const t1 = animate(8, setCountQ, 500);
+    const t2 = animate(4, setCountM, 700);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [step]);
 
   // Auto-focus input
   useEffect(() => {
@@ -510,7 +555,7 @@ export default function OnboardingPage() {
                     className="mt-4 text-base leading-relaxed"
                     style={{ color: "var(--text-secondary)" }}
                   >
-                    8 preguntas. 4 minutos. Vamos a identificar la herida emocional que está detrás de tu patrón con el dinero.
+                    <span className="font-semibold tabular-nums" style={{ color: "var(--text-primary)" }}>{countQ}</span> preguntas. <span className="font-semibold tabular-nums" style={{ color: "var(--text-primary)" }}>{countM}</span> minutos. Vamos a identificar la herida emocional que está detrás de tu patrón con el dinero.
                   </motion.p>
 
                   <motion.div
