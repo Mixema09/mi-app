@@ -244,9 +244,9 @@ function HeroReveal({
   const prefersReduced = useReducedMotion();
   return (
     <motion.div
-      initial={prefersReduced ? false : { opacity: 0, y: 20 }}
-      animate={prefersReduced ? {} : { opacity: 1, y: 0 }}
-      transition={prefersReduced ? {} : { duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+      initial={prefersReduced ? false : { y: 20 }}
+      animate={{ y: 0 }}
+      transition={prefersReduced ? { duration: 0 } : { duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
       {children}
@@ -521,9 +521,14 @@ export default function LandingPage() {
             <span className="font-display text-lg font-semibold">
               Reconecta<span style={{ color: "var(--brand-primary)" }}>AI</span>
             </span>
-            <Link href="/login" className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
-              Iniciar sesión
-            </Link>
+            <div className="flex items-center gap-4">
+              <a href="#pricing" className="text-sm font-medium" style={{ color: "var(--brand-primary)" }}>
+                Ver el plan →
+              </a>
+              <Link href="/login" className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
+                Iniciar sesión
+              </Link>
+            </div>
           </div>
 
           {/* FIX 1: HeroReveal para elementos above-the-fold */}
@@ -555,13 +560,16 @@ export default function LandingPage() {
               <Link href="/onboarding" className="block" onClick={() => setIsPending(true)}>
                 <motion.button
                   whileTap={isPending ? undefined : { scale: 0.97 }}
+                  whileHover={isPending ? undefined : { scale: 1.02 }}
+                  animate={isPending ? {} : { scale: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 10 }}
                   disabled={isPending}
                   className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
                   style={{
                     background: "var(--brand-primary)",
                     color: "var(--surface-elevated)",
                     boxShadow: "0 4px 18px rgba(224,123,64,0.38)",
-                    transition: "transform 100ms, box-shadow 200ms",
+                    transition: "box-shadow 200ms",
                     pointerEvents: isPending ? "none" : "auto",
                     opacity: isPending ? 0.85 : 1,
                   }}
@@ -656,7 +664,6 @@ export default function LandingPage() {
                   style={{
                     background: "var(--surface-sunken)",
                     boxShadow: "var(--shadow-sm)",
-                    borderLeft: i === 0 ? "2px solid var(--brand-primary)" : undefined,
                   }}
                 >
                   <Soft3DIcon>{item.icon}</Soft3DIcon>
@@ -1047,7 +1054,7 @@ export default function LandingPage() {
                   </>
                 ) : (
                   <>
-                    Empezar mi diagnóstico gratuito
+                    Descubrir mi herida del dinero
                     <ArrowRight weight="bold" size={16} />
                   </>
                 )}
@@ -1060,7 +1067,7 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────── */}
       {/* §6  OFERTA / PRICING                               */}
       {/* ──────────────────────────────────────────────────── */}
-      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
+      <section id="pricing" className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
         <div className="mx-auto max-w-sm">
           {/* FIX 6: kicker sin "Inversión" (prohibido en avatar) */}
           <Reveal>
