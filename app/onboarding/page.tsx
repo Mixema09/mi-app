@@ -20,6 +20,7 @@ import {
   Star,
   LockSimple,
   ArrowsClockwise,
+  HandHeart,
 } from "@phosphor-icons/react";
 
 // ─── Types ─────────────────────────────────────────────────
@@ -385,7 +386,7 @@ export default function OnboardingPage() {
     if (!currentStep?.key) return;
     setSelectedChip(value);
     setAnswers((prev) => ({ ...prev, [currentStep.key!]: value }));
-    setTimeout(goNext, 300);
+    setTimeout(goNext, 600);
   }
 
   function handleInputContinue() {
@@ -401,9 +402,8 @@ export default function OnboardingPage() {
   const variants = {
     enter: (dir: number) => ({
       x: prefersReduced ? 0 : dir * 40,
-      opacity: 0,
     }),
-    center: { x: 0, opacity: 1 },
+    center: { x: 0 },
     exit: (dir: number) => ({
       x: prefersReduced ? 0 : dir * -40,
       opacity: 0,
@@ -470,8 +470,8 @@ export default function OnboardingPage() {
             {currentStep?.type === "welcome" && (
               <div className="flex flex-1 flex-col items-center justify-center px-4 py-12 text-center">
                 <motion.div
-                  initial={{ scale: 0.85, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
+                  initial={{ scale: 0.85 }}
+                  animate={{ scale: 1 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="mb-8 flex size-20 items-center justify-center rounded-[var(--radius-lg)]"
                   style={{
@@ -483,8 +483,8 @@ export default function OnboardingPage() {
                 </motion.div>
 
                 <motion.h1
-                  initial={{ y: 16, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
+                  initial={{ y: 16 }}
+                  animate={{ y: 0 }}
                   transition={{ delay: 0.12, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="font-display text-3xl font-bold leading-tight"
                   style={{ color: "var(--text-primary)" }}
@@ -493,8 +493,8 @@ export default function OnboardingPage() {
                 </motion.h1>
 
                 <motion.p
-                  initial={{ y: 16, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
+                  initial={{ y: 16 }}
+                  animate={{ y: 0 }}
                   transition={{ delay: 0.22, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="mt-4 text-base leading-relaxed"
                   style={{ color: "var(--text-secondary)" }}
@@ -503,8 +503,8 @@ export default function OnboardingPage() {
                 </motion.p>
 
                 <motion.div
-                  initial={{ y: 16, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
+                  initial={{ y: 16 }}
+                  animate={{ y: 0 }}
                   transition={{ delay: 0.32, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="mt-8 flex flex-col gap-3 text-sm"
                   style={{ color: "var(--text-muted)" }}
@@ -520,8 +520,8 @@ export default function OnboardingPage() {
                 </motion.div>
 
                 <motion.div
-                  initial={{ y: 16, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
+                  initial={{ y: 16 }}
+                  animate={{ y: 0 }}
                   transition={{ delay: 0.42, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="mt-10 w-full max-w-xs"
                 >
@@ -659,17 +659,18 @@ export default function OnboardingPage() {
               <div className="flex flex-1 flex-col items-center justify-center px-4 py-12 text-center">
                 <div className="mx-auto max-w-sm">
                   <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="mb-6 text-5xl"
+                    className="mx-auto mb-6 flex size-20 items-center justify-center rounded-[var(--radius-lg)]"
+                    style={{ background: "color-mix(in oklab, var(--brand-primary) 10%, transparent)" }}
                   >
-                    🫂
+                    <HandHeart size={40} weight="duotone" style={{ color: "var(--brand-primary)" }} />
                   </motion.div>
 
                   <motion.h2
-                    initial={{ y: 16, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
+                    initial={{ y: 16 }}
+                    animate={{ y: 0 }}
                     transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="font-display text-2xl font-bold leading-snug"
                     style={{ color: "var(--text-primary)" }}
@@ -678,8 +679,8 @@ export default function OnboardingPage() {
                   </motion.h2>
 
                   <motion.p
-                    initial={{ y: 16, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
+                    initial={{ y: 16 }}
+                    animate={{ y: 0 }}
                     transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-4 text-base leading-relaxed"
                     style={{ color: "var(--text-secondary)" }}
@@ -688,8 +689,8 @@ export default function OnboardingPage() {
                   </motion.p>
 
                   <motion.p
-                    initial={{ y: 16, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
+                    initial={{ y: 16 }}
+                    animate={{ y: 0 }}
                     transition={{ delay: 0.3, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-4 text-base leading-relaxed"
                     style={{ color: "var(--text-secondary)" }}
@@ -698,8 +699,8 @@ export default function OnboardingPage() {
                   </motion.p>
 
                   <motion.button
-                    initial={{ y: 16, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
+                    initial={{ y: 16 }}
+                    animate={{ y: 0 }}
                     transition={{ delay: 0.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     whileTap={{ scale: 0.97 }}
                     onClick={goNext}
@@ -807,8 +808,8 @@ export default function OnboardingPage() {
               <div className="flex flex-1 flex-col px-4 py-8">
                 <div className="mx-auto w-full max-w-sm">
                   <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: 1 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   >
                     <p className="text-sm font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
@@ -823,8 +824,8 @@ export default function OnboardingPage() {
                   </motion.div>
 
                   <motion.div
-                    initial={{ y: 16, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
+                    initial={{ y: 16 }}
+                    animate={{ y: 0 }}
                     transition={{ delay: 0.15, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-6 rounded-[var(--radius-md)] p-5"
                     style={{
@@ -839,8 +840,8 @@ export default function OnboardingPage() {
 
                   {/* Locked content teaser */}
                   <motion.div
-                    initial={{ y: 16, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
+                    initial={{ y: 16 }}
+                    animate={{ y: 0 }}
                     transition={{ delay: 0.28, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-5 overflow-hidden rounded-[var(--radius-md)]"
                     style={{
@@ -893,8 +894,8 @@ export default function OnboardingPage() {
 
                   {/* CTA */}
                   <motion.div
-                    initial={{ y: 16, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
+                    initial={{ y: 16 }}
+                    animate={{ y: 0 }}
                     transition={{ delay: 0.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-6"
                   >

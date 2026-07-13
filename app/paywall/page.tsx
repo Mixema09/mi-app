@@ -15,6 +15,8 @@ import {
   ArrowsClockwise,
   Wallet,
   SealCheck,
+  CaretLeft,
+  Quotes,
 } from "@phosphor-icons/react";
 
 // ─── Types ──────────────────────────────────────────────────
@@ -68,6 +70,19 @@ const HERIDAS: Record<Herida, { title: string; color: string; icon: React.ReactN
   },
 };
 
+const TESTIMONIOS = [
+  {
+    quote: "En 2 semanas entendí por qué siempre gasto todo lo que gano. Es la primera vez que algo realmente conecta.",
+    author: "Andrea M., 34",
+    herida: "Herida de Escasez",
+  },
+  {
+    quote: "Siempre supe que mi problema con el dinero venía de algo más profundo. RAÍZ me dio nombre y ruta.",
+    author: "Carolina V., 41",
+    herida: "Herida del Merecimiento",
+  },
+];
+
 // ─── Main component ─────────────────────────────────────────
 
 export default function PaywallPage() {
@@ -118,10 +133,20 @@ export default function PaywallPage() {
       {/* Header */}
       <header className="sticky top-0 z-20 px-4 pt-safe-top" style={{ background: "var(--surface-base)" }}>
         <div className="mx-auto flex max-w-sm items-center justify-between py-4">
-          <Link href="/" className="font-display text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
-            Reconecta<span style={{ color: "var(--brand-primary)" }}>AI</span>
-          </Link>
-          <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => router.back()}
+              className="flex size-11 items-center justify-center rounded-full"
+              style={{ color: "var(--text-secondary)" }}
+              aria-label="Volver"
+            >
+              <CaretLeft size={20} weight="bold" />
+            </button>
+            <Link href="/" className="font-display text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
+              Reconecta<span style={{ color: "var(--brand-primary)" }}>AI</span>
+            </Link>
+          </div>
+          <span className="text-xs font-medium" style={{ color: "var(--brand-primary)" }}>
             7 días gratis
           </span>
         </div>
@@ -132,8 +157,8 @@ export default function PaywallPage() {
 
           {/* Hero — resultado personalizado */}
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+            initial={{ y: 20 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="pt-6 text-center"
           >
@@ -164,8 +189,8 @@ export default function PaywallPage() {
 
           {/* Ruta personalizada (preview) */}
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+            initial={{ y: 20 }}
+            animate={{ y: 0 }}
             transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-6 rounded-[var(--radius-md)] overflow-hidden"
             style={{
@@ -209,9 +234,9 @@ export default function PaywallPage() {
 
           {/* Features */}
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.18, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ y: 20 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.16, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-5 flex flex-col gap-3"
           >
             {FEATURES.map((f, i) => (
@@ -232,11 +257,38 @@ export default function PaywallPage() {
             ))}
           </motion.div>
 
+          {/* Testimonios */}
+          <motion.div
+            initial={{ y: 20 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.22, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-5 flex flex-col gap-3"
+          >
+            {TESTIMONIOS.map((t, i) => (
+              <div
+                key={i}
+                className="rounded-[var(--radius-md)] p-4"
+                style={{
+                  background: "var(--surface-elevated)",
+                  border: "1px solid var(--border-subtle)",
+                }}
+              >
+                <Quotes size={16} weight="fill" style={{ color: "var(--brand-primary)" }} />
+                <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                  {t.quote}
+                </p>
+                <p className="mt-2 text-xs font-medium" style={{ color: "var(--text-muted)" }}>
+                  — {t.author} · {t.herida}
+                </p>
+              </div>
+            ))}
+          </motion.div>
+
           {/* Pricing toggle */}
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.26, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ y: 20 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.28, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-8"
           >
             {/* Toggle */}
@@ -293,9 +345,9 @@ export default function PaywallPage() {
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={price}
-                    initial={{ y: prefersReduced ? 0 : -10, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: prefersReduced ? 0 : 10, opacity: 0 }}
+                    initial={{ y: prefersReduced ? 0 : -8 }}
+                    animate={{ y: 0 }}
+                    exit={{ y: prefersReduced ? 0 : 8, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                     className="font-display text-4xl font-bold"
                     style={{ color: "var(--text-primary)" }}
@@ -333,9 +385,9 @@ export default function PaywallPage() {
 
           {/* CTA */}
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.34, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ y: 20 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.36, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-5"
           >
             <motion.button

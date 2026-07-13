@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { ArrowRight, EnvelopeSimple, Check, GoogleLogo, SpinnerGap } from "@phosphor-icons/react";
 
@@ -10,6 +10,8 @@ type Mode = "idle" | "sending" | "sent" | "error";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [mode, setMode] = useState<Mode>("idle");
+  const prefersReduced = useReducedMotion();
+  const emailRef = useRef<HTMLInputElement>(null);
 
   function isValidEmail(e: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
@@ -27,8 +29,14 @@ export default function LoginPage() {
   function handleGoogle() {
     // Stub: Supabase Google OAuth en Sesión 6
     setMode("sending");
-    setTimeout(() => setMode("error"), 1500);
+    setTimeout(() => {
+      setMode("error");
+      setTimeout(() => emailRef.current?.focus(), 50);
+    }, 1500);
   }
+
+  const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
+  const dur = prefersReduced ? 0 : 0.45;
 
   return (
     <div
@@ -41,7 +49,7 @@ export default function LoginPage() {
           <Link href="/" className="font-display text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
             Reconecta<span style={{ color: "var(--brand-primary)" }}>AI</span>
           </Link>
-          <Link href="/onboarding" className="text-sm" style={{ color: "var(--text-muted)" }}>
+          <Link href="/paywall" className="text-sm" style={{ color: "var(--text-muted)" }}>
             Volver
           </Link>
         </div>
@@ -51,9 +59,9 @@ export default function LoginPage() {
         <div className="mx-auto w-full max-w-sm">
 
           <motion.div
-            initial={{ y: 16, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ y: prefersReduced ? 0 : 16 }}
+            animate={{ y: 0 }}
+            transition={{ duration: dur, ease }}
           >
             <h1
               className="font-display text-3xl font-bold leading-tight"
@@ -68,17 +76,17 @@ export default function LoginPage() {
 
           {/* Magic link form */}
           <motion.div
-            initial={{ y: 16, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ y: prefersReduced ? 0 : 16 }}
+            animate={{ y: 0 }}
+            transition={{ delay: prefersReduced ? 0 : 0.1, duration: dur, ease }}
             className="mt-8"
           >
             <AnimatePresence mode="wait">
               {mode === "sent" ? (
                 <motion.div
                   key="sent"
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
+                  initial={{ scale: 0.95 }}
+                  animate={{ scale: 1 }}
                   className="rounded-[var(--radius-md)] p-6 text-center"
                   style={{ background: "color-mix(in oklab, var(--brand-primary) 8%, transparent)", border: "1px solid color-mix(in oklab, var(--brand-primary) 18%, transparent)" }}
                 >
@@ -116,6 +124,7 @@ export default function LoginPage() {
                       style={{ color: "var(--text-muted)" }}
                     />
                     <input
+                      ref={emailRef}
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -135,7 +144,7 @@ export default function LoginPage() {
 
                   {mode === "error" && (
                     <p className="text-xs" style={{ color: "var(--semantic-error)" }}>
-                      Algo salió mal. Intenta de nuevo o usa el enlace mágico.
+                      Google no está disponible en este momento. Ingresa tu correo arriba para entrar sin contraseña — es igual de rápido.
                     </p>
                   )}
 
@@ -171,49 +180,35 @@ export default function LoginPage() {
 
           {/* Divider */}
           {mode !== "sent" && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.18 }}
-              className="my-5 flex items-center gap-3"
-            >
+            <div className="my-5 flex items-center gap-3">
               <div className="flex-1" style={{ height: "1px", background: "var(--border-subtle)" }} />
               <span className="text-xs" style={{ color: "var(--text-muted)" }}>o continúa con</span>
               <div className="flex-1" style={{ height: "1px", background: "var(--border-subtle)" }} />
-            </motion.div>
+            </div>
           )}
 
           {/* Google */}
           {mode !== "sent" && (
-            <motion.div
-              initial={{ y: 16, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.22, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 80, damping: 18 }}
+              onClick={handleGoogle}
+              disabled={mode === "sending"}
+              className="flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-medium"
+              style={{
+                background: "var(--surface-elevated)",
+                border: "1.5px solid var(--border-subtle)",
+                color: "var(--text-primary)",
+                boxShadow: "var(--shadow-sm)",
+              }}
             >
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 80, damping: 18 }}
-                onClick={handleGoogle}
-                disabled={mode === "sending"}
-                className="flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-medium"
-                style={{
-                  background: "var(--surface-elevated)",
-                  border: "1.5px solid var(--border-subtle)",
-                  color: "var(--text-primary)",
-                  boxShadow: "var(--shadow-sm)",
-                }}
-              >
-                <GoogleLogo size={20} weight="bold" />
-                Continuar con Google
-              </motion.button>
-            </motion.div>
+              <GoogleLogo size={20} weight="bold" />
+              Continuar con Google
+            </motion.button>
           )}
 
           {/* Legal */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
+          <p
             className="mt-6 text-center text-xs leading-relaxed"
             style={{ color: "var(--text-muted)" }}
           >
@@ -222,7 +217,7 @@ export default function LoginPage() {
             y la{" "}
             <Link href="/privacidad" style={{ color: "var(--brand-primary)" }}>Política de privacidad</Link>.
             <br />Sin contraseña — acceso por enlace mágico o Google.
-          </motion.p>
+          </p>
 
           {/* Already have account */}
           <p className="mt-4 text-center text-xs" style={{ color: "var(--text-muted)" }}>

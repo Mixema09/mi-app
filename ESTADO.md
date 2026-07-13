@@ -2,8 +2,8 @@
 Última actualización: 2026-07-13 | Sesión actual: 4
 
 ✅ Sesión 3 CERRADA — Landing pausada por decisión del usuario. Score final: 30/40·15/20·18/20 (11 rondas). Tag git: landing-v1-stable (commit 38c2f35). Pulido fino diferido a Sesión 7. NO retocar landing hasta solicitud explícita.
-🔧 CHECKPOINT ACTIVO — Sesión 4 EN PROGRESO: Onboarding diagnóstico multi-paso → Paywall (Perfil Emocional™) → Login UI
-Próximo paso EXACTO: construir /onboarding (flujo diagnóstico) → /paywall → /login — UI-first sin backend (Supabase/Claude API en Sesión 6)
+🔧 CHECKPOINT ACTIVO — Sesión 4 RONDA 2 EN REVISIÓN: las 3 pantallas construidas, fix de blank-render aplicado, revisor-visual corriendo.
+Próximo paso EXACTO: esperar scores del revisor-visual → si ≥36/40 y ≥16/20 en las 3 → cerrar Sesión 4 → empezar Sesión 5 (app interna: dashboard + chat IA + ruta + gamificación).
 
 ## Qué es esta app
 Reconecta AI: plataforma de sanación emocional de la relación con el dinero usando el Método RAÍZ™, IA conversacional con memoria y contenido personalizado. Para adultos de LATAM con bloqueos económicos de origen emocional. Modelo: Onboarding-first anónimo → paywall post-diagnóstico. $7.49/mes · $59.99/año.
@@ -46,19 +46,19 @@ Reconecta AI: plataforma de sanación emocional de la relación con el dinero us
 
 ## Secuencia maestra de construcción
 - Ruta: `/` → `/onboarding` → `/paywall` → `/login` → `/app`
-- Landing: pendiente (Sesión 3)
-- Onboarding: pendiente (Sesión 4)
-- Paywall: pendiente (Sesión 4)
-- Login/Auth: pendiente (Sesión 4)
+- Landing: ✅ PAUSADA (v1-stable, Sesión 7)
+- Onboarding: 🔧 EN REVISIÓN (ronda 2)
+- Paywall: 🔧 EN REVISIÓN (ronda 2)
+- Login/Auth: 🔧 EN REVISIÓN (ronda 2)
 - App interna: pendiente (Sesión 5)
 - Servicios externos: pendiente (Sesión 6)
 
 ## Puertas de etapa
-- Landing: no iniciada
-- Onboarding: no iniciada
-- Paywall: no iniciada
-- Login/Auth: no iniciada
-- App interna: no iniciada
+- Landing: ⏸ pausada (score 30/40, retomar Sesión 7)
+- Onboarding: 🔧 revisión ronda 2 — score ronda 1: 21/40·4/20
+- Paywall: 🔧 revisión ronda 2 — score ronda 1: 20/40·4/20·13/20
+- Login/Auth: 🔧 revisión ronda 2 — score ronda 1: 22/40·3/20
+- App interna: no iniciada (espera cierre Sesión 4)
 - Servicios externos: bloqueados (esperan puertas anteriores)
 - Certificado /100 (48): pendiente (Sesión 7)
 
@@ -88,18 +88,23 @@ Reconecta AI: plataforma de sanación emocional de la relación con el dinero us
 - Sesión 3 — Landing page 10 secciones (app/page.tsx) PAUSADA · score 30/40·15/20·18/20 · tag landing-v1-stable · pulido Sesión 7 — 2026-07-13
 
 ## Sesión en progreso 🔧
-- Sesión 4 — Onboarding diagnóstico + Paywall + Login — EN CONSTRUCCIÓN
+- Sesión 4 — Onboarding diagnóstico + Paywall + Login — RONDA 2 (fixes aplicados, revisor corriendo)
 - Arquitectura: UI-first con localStorage (sin Supabase/Claude API hasta Sesión 6)
-- /onboarding: flujo multi-paso (8-10 pantallas) → genera Perfil Emocional del Dinero™ → /paywall
-- /paywall: muestra Perfil + pricing $4.99/mes anual · $7.49/mes mensual · 7 días gratis → /login
-- /login: UI magic link + Google OAuth (stub visual — auth real en Sesión 6)
+- /onboarding: 12 pasos (welcome→8 preguntas→recognition→loading→reveal) — Perfil Emocional del Dinero™ engine (4 arquetipos) — commit 8b9279d
+- /paywall: muestra herida + ruta preview + features + 2 testimonios + pricing toggle + CTA trial — commit activo
+- /login: magic link + Google OAuth stub, useReducedMotion integrado, error Google arreglado — commit activo
+- FIX CRÍTICO APLICADO: opacity:0 eliminado de todos los initial states (causa de blank render en SSR/Playwright)
+- FIX ONBOARDING: emoji 🫂 → HandHeart (Phosphor), auto-avance 300ms → 600ms
+- FIX PAYWALL: back button (router.back()), 2 testimonios agregados
+- FIX LOGIN: useReducedMotion integrado, mensaje de error de Google arreglado
+- Score anterior (ronda 1, blank render): onboarding 21/40·4/20 · paywall 20/40·4/20·13/20 · login 22/40·3/20
+- Score ronda 2: PENDIENTE (revisor-visual corriendo)
 
 ## Próximas sesiones 📋
-- Sesión 3 (SIGUIENTE): Página de ventas — 10 secciones canónicas, copy desde FICHA-AVATAR.md
-- Sesión 4: Onboarding diagnóstico + paywall + login
-- Sesión 5: App interna — dashboard + chat IA + ruta personalizada + gamificación
+- Sesión 4 (ACTUAL): cerrar con gates ≥36/40 y ≥16/20 en las 3 pantallas
+- Sesión 5 (SIGUIENTE): App interna — dashboard + chat IA + ruta personalizada + gamificación
 - Sesión 6: Integraciones — Supabase + Claude API + Hotmart + Vercel + Resend + dominio
-- Sesión 7: Testing + 7 animaciones baseline + pulido + certificado /100
+- Sesión 7: Testing + 7 animaciones baseline + pulido landing + certificado /100
 - Sesión 8: Adquisición (afiliados Hotmart + IG) + lanzamiento + backoffice
 
 ## Problemas conocidos ⚠️
