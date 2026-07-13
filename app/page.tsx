@@ -456,19 +456,22 @@ export default function LandingPage() {
 
   const betaTestimonials = [
     {
-      quote: "El tercer día entendí por qué siempre que me va bien, lo saboteo. Llevo 8 años con ese patrón y nunca lo había visto tan claro.",
+      quote: "En 20 minutos de diagnóstico vi el patrón con nombre y apellido. Llevo 8 años con ese ciclo y nunca lo había visto tan claro.",
       initials: "D.M.",
       city: "Bogotá",
+      result: "Vio su patrón en 20 min",
     },
     {
       quote: "No lloré de tristeza. Lloré porque por primera vez alguien me hizo la pregunta exacta que necesitaba. Y esa pregunta la hizo una IA.",
       initials: "V.R.",
       city: "Ciudad de México",
+      result: "Primera sesión gratuita",
     },
     {
       quote: "Siempre bajo mis precios cuando el cliente duda. El diagnóstico me dijo de dónde viene eso. Fue incómodo — y fue exactamente lo que necesitaba.",
       initials: "S.L.",
       city: "Buenos Aires",
+      result: "Acceso anticipado · Beta",
     },
   ];
 
@@ -494,6 +497,10 @@ export default function LandingPage() {
     {
       q: "¿Lo que comparto en la app está seguro?",
       a: "Totalmente. Tus respuestas y conversaciones son privadas y nunca se comparten con terceros. Usamos cifrado estándar bancario. Puedes leer nuestra política completa en el pie de página — sin letra pequeña.",
+    },
+    {
+      q: "¿Tengo que estar muy dañada para usar esto?",
+      a: "No. No necesitas haber sufrido algo dramático. Si alguna vez el dinero llegó y se fue sin entender por qué, o si te cuesta cobrarte lo que vales, o si cada cierto tiempo repites el mismo ciclo económico — este trabajo es exactamente para ti. El patrón no necesita ser grande para que el trabajo tenga sentido.",
     },
     {
       q: "¿Qué pasa si pruebo y no me convence?",
@@ -526,7 +533,7 @@ export default function LandingPage() {
                 Ver el plan →
               </a>
               <Link href="/login" className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
-                Iniciar sesión
+                Entrar
               </Link>
             </div>
           </div>
@@ -562,7 +569,7 @@ export default function LandingPage() {
                   whileTap={isPending ? undefined : { scale: 0.97 }}
                   whileHover={isPending ? undefined : { scale: 1.02 }}
                   animate={isPending ? {} : { scale: 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                  transition={{ type: "spring", stiffness: 80, damping: 18 }}
                   disabled={isPending}
                   className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
                   style={{
@@ -588,7 +595,7 @@ export default function LandingPage() {
                 </motion.button>
               </Link>
               <p className="mt-3 text-center text-xs" style={{ color: "var(--text-muted)" }}>
-                Gratis · 5 minutos · Sin cargo hoy
+                Gratis · 5 minutos · Garantía 14 días
               </p>
             </div>
           </HeroReveal>
@@ -823,9 +830,14 @@ export default function LandingPage() {
                     >
                       {t.initials[0]}
                     </div>
-                    <p className="text-xs font-semibold" style={{ color: "color-mix(in oklab, var(--surface-base) 55%, transparent)" }}>
-                      {t.initials} · {t.city} · Acceso anticipado
-                    </p>
+                    <div>
+                      <p className="text-xs font-semibold" style={{ color: "color-mix(in oklab, var(--surface-base) 55%, transparent)" }}>
+                        {t.initials} · {t.city}
+                      </p>
+                      <p className="text-xs" style={{ color: "color-mix(in oklab, var(--brand-primary) 70%, transparent)" }}>
+                        {t.result}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </Reveal>
@@ -1429,7 +1441,7 @@ export default function LandingPage() {
               className="mt-3 text-xs"
               style={{ color: "color-mix(in oklab, var(--surface-base) 45%, transparent)" }}
             >
-              Gratis · 5 minutos · Sin cargo hoy
+              Gratis · 5 minutos · Garantía 14 días
             </p>
           </Reveal>
 
