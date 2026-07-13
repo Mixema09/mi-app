@@ -316,7 +316,18 @@ export default function OnboardingPage() {
   const [loadingPct, setLoadingPct] = useState(0);
   const [countQ, setCountQ] = useState(0);
   const [countM, setCountM] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const confettiPieces = useRef(
+    Array.from({ length: 14 }, (_, i) => ({
+      x: (((i % 7) / 6) - 0.5) * 300 + (i > 6 ? 15 : -15),
+      y: -(90 + i * 22),
+      rotate: i * 26,
+      color: ["var(--brand-primary)", "var(--brand-gold)", "color-mix(in oklab, var(--brand-primary) 50%, white)"][i % 3],
+      delay: i * 0.04,
+      size: 7 + (i % 3) * 3,
+    }))
+  );
 
   const currentStep = STEPS[step];
   const pct = stepProgress(step);
@@ -348,6 +359,14 @@ export default function OnboardingPage() {
     if (currentStep?.type !== "loading" && currentStep?.type !== "reveal") {
       localStorage.setItem("raiz_step", String(step));
     }
+  }, [step]);
+
+  // Confetti on reveal
+  useEffect(() => {
+    if (currentStep?.type !== "reveal" || prefersReduced) return;
+    setShowConfetti(false);
+    const t = setTimeout(() => setShowConfetti(true), 200);
+    return () => clearTimeout(t);
   }, [step]);
 
   // Count-up for welcome numbers
@@ -780,8 +799,8 @@ export default function OnboardingPage() {
                   </motion.div>
 
                   <motion.h2
-                    initial={{ y: 16 }}
-                    animate={{ y: 0 }}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="font-display text-2xl font-bold leading-snug"
                     style={{ color: "var(--text-primary)" }}
@@ -790,8 +809,8 @@ export default function OnboardingPage() {
                   </motion.h2>
 
                   <motion.p
-                    initial={{ y: 16 }}
-                    animate={{ y: 0 }}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-4 text-base leading-relaxed"
                     style={{ color: "var(--text-secondary)" }}
@@ -800,8 +819,8 @@ export default function OnboardingPage() {
                   </motion.p>
 
                   <motion.p
-                    initial={{ y: 16 }}
-                    animate={{ y: 0 }}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-4 text-base leading-relaxed"
                     style={{ color: "var(--text-secondary)" }}
@@ -810,12 +829,12 @@ export default function OnboardingPage() {
                   </motion.p>
 
                   <motion.button
-                    initial={{ y: 16 }}
-                    animate={{ y: 0 }}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     whileTap={{ scale: 0.97 }}
                     onClick={goNext}
-                    className="mt-10 flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+                    className="mt-10 flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
                     style={{
                       background: "var(--brand-primary)",
                       color: "white",
@@ -834,14 +853,15 @@ export default function OnboardingPage() {
               <div className="flex flex-1 flex-col items-center justify-center px-4 py-12 text-center">
                 <div className="mx-auto w-full max-w-sm">
                   <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
-                    className="mx-auto mb-8 flex size-16 items-center justify-center rounded-full"
+                    animate={{ scale: [1, 1.12, 1], boxShadow: ["var(--soft3d-shadow-lg)", "0 0 0 8px color-mix(in oklab, var(--brand-primary) 12%, transparent)", "var(--soft3d-shadow-lg)"] }}
+                    transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                    className="mx-auto mb-8 flex size-16 items-center justify-center rounded-[var(--radius-lg)]"
                     style={{
-                      background: "color-mix(in oklab, var(--brand-primary) 10%, transparent)",
+                      background: "var(--soft3d-bg)",
+                      boxShadow: "var(--soft3d-shadow-lg)",
                     }}
                   >
-                    <SpinnerGap size={32} weight="bold" style={{ color: "var(--brand-primary)" }} />
+                    <Brain size={32} weight="duotone" color="white" />
                   </motion.div>
 
                   <h2
@@ -917,6 +937,23 @@ export default function OnboardingPage() {
             {/* ── Reveal ── */}
             {currentStep?.type === "reveal" && (
               <div className="flex flex-1 flex-col px-4 py-8">
+                {/* Confetti burst */}
+                <AnimatePresence>
+                  {showConfetti && (
+                    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+                      {confettiPieces.current.map((p, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ x: "50vw", y: "35vh", opacity: 1, rotate: 0, scale: 1 }}
+                          animate={{ x: `calc(50vw + ${p.x}px)`, y: `calc(35vh + ${p.y}px)`, opacity: 0, rotate: p.rotate, scale: 0 }}
+                          transition={{ duration: 1.1 + (i % 3) * 0.15, delay: p.delay, ease: "easeOut" }}
+                          className="absolute rounded-sm"
+                          style={{ width: p.size, height: p.size, background: p.color }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </AnimatePresence>
                 <div className="mx-auto w-full max-w-sm">
                   <motion.div
                     initial={{ scale: 0.9 }}
@@ -944,8 +981,8 @@ export default function OnboardingPage() {
                   </motion.div>
 
                   <motion.div
-                    initial={{ y: 16 }}
-                    animate={{ y: 0 }}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.15, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-6 rounded-[var(--radius-md)] p-5"
                     style={{
@@ -960,8 +997,8 @@ export default function OnboardingPage() {
 
                   {/* Locked content teaser */}
                   <motion.div
-                    initial={{ y: 16 }}
-                    animate={{ y: 0 }}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.28, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-5 overflow-hidden rounded-[var(--radius-md)]"
                     style={{
@@ -1014,8 +1051,8 @@ export default function OnboardingPage() {
 
                   {/* CTA */}
                   <motion.div
-                    initial={{ y: 16 }}
-                    animate={{ y: 0 }}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-6"
                   >

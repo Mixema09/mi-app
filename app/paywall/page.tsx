@@ -179,9 +179,16 @@ export default function PaywallPage() {
               Reconecta<span style={{ color: "var(--brand-primary)" }}>AI</span>
             </Link>
           </div>
-          <span className="text-xs font-medium" style={{ color: "var(--brand-primary)" }}>
-            7 días gratis
-          </span>
+          <div className="flex items-center gap-2">
+            <div className="flex gap-1">
+              {[0,1,2].map((i) => (
+                <div key={i} className="size-2 rounded-full" style={{ background: i < 2 ? "var(--brand-primary)" : "var(--border-subtle)", opacity: i < 2 ? 0.4 : 1 }} />
+              ))}
+            </div>
+            <span className="text-xs font-medium" style={{ color: "var(--brand-primary)" }}>
+              Último paso
+            </span>
+          </div>
         </div>
       </header>
 
@@ -225,6 +232,17 @@ export default function PaywallPage() {
             <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
               Tu ruta de 90 días está lista. Desbloquéala con 7 días gratis — sin tarjeta hoy.
             </p>
+            <a
+              href="#pricing"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold"
+              style={{
+                background: "color-mix(in oklab, var(--brand-primary) 10%, transparent)",
+                border: "1px solid color-mix(in oklab, var(--brand-primary) 20%, transparent)",
+                color: "var(--brand-primary)",
+              }}
+            >
+              7 días gratis · desde $4.99/mes — sin tarjeta ↓
+            </a>
           </motion.div>
 
           {/* Ruta personalizada (preview) */}
@@ -298,67 +316,12 @@ export default function PaywallPage() {
             ))}
           </motion.div>
 
-          {/* Testimonios */}
+          {/* Pricing toggle */}
           <motion.div
+            id="pricing"
             initial={{ y: prefersReduced ? 0 : 20, opacity: prefersReduced ? 1 : 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.22, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-5 flex flex-col gap-3"
-          >
-            <div className="flex items-center justify-center gap-2 py-1">
-              <div className="flex -space-x-1.5">
-                {["A","C","M"].map((l, i) => (
-                  <div key={i} className="flex size-6 items-center justify-center rounded-full text-xs font-bold ring-2 ring-[var(--surface-base)]"
-                    style={{ background: `color-mix(in oklab, var(--brand-primary) ${60 - i * 10}%, transparent)`, color: "white" }}>
-                    {l}
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
-                <span style={{ color: "var(--brand-primary)", fontWeight: 700 }}>847 mujeres</span> ya iniciaron su ruta de sanación
-              </p>
-            </div>
-            {testimoniosOrdenados.map((t, i) => (
-              <div
-                key={i}
-                className="rounded-[var(--radius-md)] p-4"
-                style={{
-                  background: "var(--surface-elevated)",
-                  border: "1px solid var(--border-subtle)",
-                }}
-              >
-                <div className="mb-3 flex items-center gap-3">
-                  <div
-                    className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-                    style={{
-                      background: "color-mix(in oklab, var(--brand-primary) 15%, transparent)",
-                      color: "var(--brand-primary)",
-                    }}
-                  >
-                    {t.author.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
-                      {t.author}
-                    </p>
-                    <p className="text-xs" style={{ color: "var(--brand-primary)" }}>
-                      {t.herida}
-                    </p>
-                  </div>
-                </div>
-                <Quotes size={14} weight="fill" style={{ color: "var(--brand-primary)", opacity: 0.5 }} />
-                <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                  {t.quote}
-                </p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Pricing toggle */}
-          <motion.div
-            initial={{ y: prefersReduced ? 0 : 20, opacity: prefersReduced ? 1 : 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.28, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-8"
           >
             {/* Toggle */}
@@ -499,9 +462,68 @@ export default function PaywallPage() {
                 className="text-xs"
                 style={{ color: "var(--text-muted)" }}
               >
-                Ahora no — continuar sin plan
+                Crear cuenta sin plan
               </Link>
+              <p className="mt-1 text-xs" style={{ color: "var(--text-muted)", opacity: 0.7 }}>
+                (guardamos tu diagnóstico aunque no te suscribas hoy)
+              </p>
             </div>
+          </motion.div>
+
+          {/* Testimonios — después del CTA para no bloquear la ruta de conversión */}
+          <motion.div
+            initial={{ y: prefersReduced ? 0 : 20, opacity: prefersReduced ? 1 : 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.44, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-8 flex flex-col gap-3 pb-4"
+          >
+            <div className="flex items-center justify-center gap-2 py-1">
+              <div className="flex -space-x-1.5">
+                {["A","C","M"].map((l, i) => (
+                  <div key={i} className="flex size-6 items-center justify-center rounded-full text-xs font-bold ring-2 ring-[var(--surface-base)]"
+                    style={{ background: `color-mix(in oklab, var(--brand-primary) ${60 - i * 10}%, transparent)`, color: "white" }}>
+                    {l}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+                <span style={{ color: "var(--brand-primary)", fontWeight: 700 }}>847 mujeres</span> ya iniciaron su ruta de sanación
+              </p>
+            </div>
+            {testimoniosOrdenados.map((t, i) => (
+              <div
+                key={i}
+                className="rounded-[var(--radius-md)] p-4"
+                style={{
+                  background: "var(--surface-elevated)",
+                  border: "1px solid var(--border-subtle)",
+                }}
+              >
+                <div className="mb-3 flex items-center gap-3">
+                  <div
+                    className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                    style={{
+                      background: "color-mix(in oklab, var(--brand-primary) 15%, transparent)",
+                      color: "var(--brand-primary)",
+                    }}
+                  >
+                    {t.author.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
+                      {t.author}
+                    </p>
+                    <p className="text-xs" style={{ color: "var(--brand-primary)" }}>
+                      {t.herida}
+                    </p>
+                  </div>
+                </div>
+                <Quotes size={14} weight="fill" style={{ color: "var(--brand-primary)", opacity: 0.5 }} />
+                <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                  {t.quote}
+                </p>
+              </div>
+            ))}
           </motion.div>
 
         </div>

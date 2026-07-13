@@ -18,6 +18,10 @@ export default function LoginPage() {
   const emailRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    emailRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
     if (resendCooldown <= 0) return;
     const t = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
     return () => clearTimeout(t);
@@ -47,7 +51,9 @@ export default function LoginPage() {
     try {
       // Stub: reenvío magic link — Sesión 6
       await new Promise((r) => setTimeout(r, 800));
-    } catch {}
+    } catch {
+      setMode("error");
+    }
   }
 
   function handleGoogle() {
@@ -225,12 +231,13 @@ export default function LoginPage() {
                     disabled={!isValidEmail(email) || mode === "sending"}
                     className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
                     style={{
-                      background: "var(--brand-primary)",
+                      background: isValidEmail(email) || mode === "sending"
+                        ? "var(--brand-primary)"
+                        : "color-mix(in oklab, var(--brand-primary) 40%, var(--surface-base))",
                       border: "1.5px solid transparent",
                       color: "white",
                       boxShadow: isValidEmail(email) ? "0 4px 18px rgba(224,123,64,0.28)" : "none",
-                      opacity: isValidEmail(email) || mode === "sending" ? 1 : 0.4,
-                      transition: "opacity 200ms, box-shadow 200ms",
+                      transition: "background 200ms, box-shadow 200ms",
                     }}
                   >
                     {mode === "sending" ? (
@@ -311,7 +318,7 @@ export default function LoginPage() {
               <Link href="/privacidad" style={{ color: "var(--brand-primary)" }}>Política de privacidad</Link>.
             </p>
             <p className="mt-3 text-xs" style={{ color: "var(--text-muted)" }}>
-              {loginMode === "create" ? "¿Ya tienes cuenta?" : "¿Eres nueva aquí?"}{" "}
+              {loginMode === "create" ? "¿Ya tienes cuenta?" : "¿Primera vez en Reconecta AI?"}{" "}
               <button
                 onClick={() => setLoginMode((m) => (m === "create" ? "login" : "create"))}
                 className="font-medium"
