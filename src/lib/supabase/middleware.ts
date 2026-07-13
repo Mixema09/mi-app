@@ -25,6 +25,7 @@ function isPublic(pathname: string) {
  *
  * Es importante devolver SIEMPRE el `supabaseResponse` (o una redirección que
  * copie sus cookies) para no romper el refresco del token.
+ * Ejecutado desde `src/middleware.ts`.
  */
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });

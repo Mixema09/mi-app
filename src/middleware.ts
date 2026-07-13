@@ -1,18 +1,12 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-// En Next.js 16 el antiguo `middleware.ts` se llama `proxy.ts`.
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   return await updateSession(request);
 }
 
 export const config = {
   matcher: [
-    /*
-     * Ejecuta en todas las rutas excepto:
-     * - _next/static, _next/image (assets internos)
-     * - favicon y archivos de imagen
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
