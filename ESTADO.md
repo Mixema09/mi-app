@@ -48,7 +48,23 @@ Stack: Next.js 16 (App Router, TypeScript, Tailwind) + Supabase (Auth + Postgres
   - Redirección tras el diagnóstico ("Ir a mi espacio" → /dashboard) + guardas de flujo.
   - Verificado: `tsc` ✅ · `build` ✅
 
-- [ ] **Bloque 7 — Chat IA + ruta personalizada**
+- [x] **Bloque 7 — Chat IA + ruta personalizada** ✅
+  - Chat `/chat` con Claude (`claude-opus-4-8`, SDK `@anthropic-ai/sdk`): system prompt personalizado con el diagnóstico y la ruta; mensajes persistidos en `chat_conversations`/`chat_messages`.
+  - Server action `sendMessageAction` (guarda mensaje, llama a Claude, guarda respuesta). Fallback elegante si falta `ANTHROPIC_API_KEY`.
+  - Página `/ruta` con la ruta personalizada completa; enlaces desde el dashboard.
+  - Nueva variable `ANTHROPIC_API_KEY` en `.env.local`/`.env.example`.
+  - Verificado: `tsc` ✅ · `build` ✅ · capturas de chat y ruta revisadas.
+
+## ✅ Flujo completo funcional
+**registro/login → onboarding → diagnóstico → resultado → pantalla principal → chat IA** (+ ruta personalizada).
+Todas las etapas conectadas a Supabase con RLS. Verificado por `tsc`, `build` y pruebas (rutas, protección, lógica del diagnóstico, capturas).
+
+## Para usar el chat IA
+Añade tu clave en `.env.local`:
+```
+ANTHROPIC_API_KEY=sk-ant-...
+```
+(consíguela en https://console.anthropic.com/settings/keys). Sin ella, el chat guarda los mensajes y muestra un aviso, pero no responde.
 
 ## Decisiones de producto (MVP)
 - Idioma: español. Usuarias = mujeres (coaching).

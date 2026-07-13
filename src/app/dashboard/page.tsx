@@ -56,9 +56,17 @@ export default async function DashboardPage() {
 
         {path && (
           <section className="mb-6 rounded-2xl border border-black/10 p-6 dark:border-white/10">
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
-              Tu ruta personalizada
-            </h2>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                Tu ruta personalizada
+              </h2>
+              <Link
+                href="/ruta"
+                className="text-sm text-gray-500 underline dark:text-gray-400"
+              >
+                Ver ruta
+              </Link>
+            </div>
             <PathCard path={path} />
           </section>
         )}
