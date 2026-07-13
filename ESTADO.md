@@ -37,7 +37,12 @@ Stack: Next.js 16 (App Router, TypeScript, Tailwind) + Supabase (Auth + Postgres
   - Cabecera autenticada `AppHeader` (saludo + salir).
   - Verificado: `tsc` ✅ · `build` ✅ · captura del wizard revisada.
 
-- [ ] **Bloque 5 — Diagnóstico + resultado personalizado**
+- [x] **Bloque 5 — Diagnóstico + resultado personalizado** ✅
+  - `src/lib/diagnosis-service.ts` (`getOrCreateDiagnosis`): calcula puntajes, guarda `diagnostic_results` + `personalized_paths`, marca `profiles.diagnosis_completed`. Idempotente.
+  - Pantalla `/diagnostico` con área de foco, barras de puntaje y ruta personalizada; CTA "Ir a mi espacio".
+  - Componentes `ScoreBars` y `PathCard`.
+  - Verificado: `tsc` ✅ · `build` ✅ · **test de lógica** (área = dimensión más baja, puntajes 0–100) ✅ · captura revisada.
+
 - [ ] **Bloque 6 — Pantalla principal + redirección**
 - [ ] **Bloque 7 — Chat IA + ruta personalizada**
 
