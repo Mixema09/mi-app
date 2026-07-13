@@ -17,6 +17,7 @@ import {
   SealCheck,
   CaretLeft,
   Quotes,
+  SpinnerGap,
 } from "@phosphor-icons/react";
 
 // ─── Types ──────────────────────────────────────────────────
@@ -93,6 +94,7 @@ export default function PaywallPage() {
   const [herida, setHerida] = useState<Herida>("merecimiento");
   const [name, setName] = useState("");
   const [isPending, setIsPending] = useState(false);
+  const [displayPrice, setDisplayPrice] = useState(0);
 
   useEffect(() => {
     const stored = localStorage.getItem("raiz_herida") as Herida | null;
@@ -105,6 +107,20 @@ export default function PaywallPage() {
       } catch {}
     }
   }, []);
+
+  useEffect(() => {
+    const target = billing === "annual" ? 4.99 : 7.49;
+    const duration = 700;
+    const startTime = Date.now();
+    const tick = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayPrice(target * eased);
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [billing]);
 
   const heridaData = HERIDAS[herida];
   const price = billing === "annual" ? "$4.99" : "$7.49";
@@ -152,12 +168,13 @@ export default function PaywallPage() {
         </div>
       </header>
 
-      <main className="px-4 pb-16">
+      <main className="relative px-4 pb-16">
+        <div className="blob-hero" />
         <div className="mx-auto max-w-sm">
 
           {/* Hero — resultado personalizado */}
           <motion.div
-            initial={{ y: 20 }}
+            initial={prefersReduced ? false : { y: 20 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="pt-6 text-center"
@@ -189,7 +206,7 @@ export default function PaywallPage() {
 
           {/* Ruta personalizada (preview) */}
           <motion.div
-            initial={{ y: 20 }}
+            initial={prefersReduced ? false : { y: 20 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-6 rounded-[var(--radius-md)] overflow-hidden"
@@ -234,7 +251,7 @@ export default function PaywallPage() {
 
           {/* Features */}
           <motion.div
-            initial={{ y: 20 }}
+            initial={prefersReduced ? false : { y: 20 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.16, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-5 flex flex-col gap-3"
@@ -244,8 +261,9 @@ export default function PaywallPage() {
                 <span
                   className="flex size-9 shrink-0 items-center justify-center rounded-xl"
                   style={{
-                    background: "color-mix(in oklab, var(--brand-primary) 10%, transparent)",
-                    color: "var(--brand-primary)",
+                    background: "var(--soft3d-bg)",
+                    boxShadow: "var(--soft3d-shadow)",
+                    color: "white",
                   }}
                 >
                   {f.icon}
@@ -259,7 +277,7 @@ export default function PaywallPage() {
 
           {/* Testimonios */}
           <motion.div
-            initial={{ y: 20 }}
+            initial={prefersReduced ? false : { y: 20 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.22, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-5 flex flex-col gap-3"
@@ -273,12 +291,28 @@ export default function PaywallPage() {
                   border: "1px solid var(--border-subtle)",
                 }}
               >
-                <Quotes size={16} weight="fill" style={{ color: "var(--brand-primary)" }} />
-                <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                <div className="mb-3 flex items-center gap-3">
+                  <div
+                    className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                    style={{
+                      background: "color-mix(in oklab, var(--brand-primary) 15%, transparent)",
+                      color: "var(--brand-primary)",
+                    }}
+                  >
+                    {t.author.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
+                      {t.author}
+                    </p>
+                    <p className="text-xs" style={{ color: "var(--brand-primary)" }}>
+                      {t.herida}
+                    </p>
+                  </div>
+                </div>
+                <Quotes size={14} weight="fill" style={{ color: "var(--brand-primary)", opacity: 0.5 }} />
+                <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                   {t.quote}
-                </p>
-                <p className="mt-2 text-xs font-medium" style={{ color: "var(--text-muted)" }}>
-                  — {t.author} · {t.herida}
                 </p>
               </div>
             ))}
@@ -286,7 +320,7 @@ export default function PaywallPage() {
 
           {/* Pricing toggle */}
           <motion.div
-            initial={{ y: 20 }}
+            initial={prefersReduced ? false : { y: 20 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.28, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-8"
@@ -342,19 +376,9 @@ export default function PaywallPage() {
               }}
             >
               <div className="flex items-end gap-1">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={price}
-                    initial={{ y: prefersReduced ? 0 : -8 }}
-                    animate={{ y: 0 }}
-                    exit={{ y: prefersReduced ? 0 : 8, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="font-display text-4xl font-bold"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    {price}
-                  </motion.span>
-                </AnimatePresence>
+                <span className="font-display text-4xl font-bold" style={{ color: "var(--text-primary)" }}>
+                  ${displayPrice.toFixed(2)}
+                </span>
                 <span className="mb-1 text-sm" style={{ color: "var(--text-muted)" }}>/ mes</span>
                 {billing === "annual" && (
                   <span className="mb-1 ml-auto text-xs" style={{ color: "var(--text-muted)" }}>
@@ -385,7 +409,7 @@ export default function PaywallPage() {
 
           {/* CTA */}
           <motion.div
-            initial={{ y: 20 }}
+            initial={prefersReduced ? false : { y: 20 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.36, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-5"
@@ -396,7 +420,7 @@ export default function PaywallPage() {
               transition={{ type: "spring", stiffness: 80, damping: 18 }}
               onClick={handleCTA}
               disabled={isPending}
-              className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+              className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
               style={{
                 background: "var(--brand-primary)",
                 color: "white",
@@ -404,8 +428,17 @@ export default function PaywallPage() {
                 opacity: isPending ? 0.85 : 1,
               }}
             >
-              Empezar mis 7 días gratis
-              <ArrowRight size={18} weight="bold" />
+              {isPending ? (
+                <>
+                  <SpinnerGap size={18} weight="bold" className="animate-spin" />
+                  Iniciando...
+                </>
+              ) : (
+                <>
+                  Empezar mis 7 días gratis
+                  <ArrowRight size={18} weight="bold" />
+                </>
+              )}
             </motion.button>
 
             {/* Guarantee */}

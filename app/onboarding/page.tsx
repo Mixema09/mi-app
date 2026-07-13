@@ -21,6 +21,7 @@ import {
   LockSimple,
   ArrowsClockwise,
   HandHeart,
+  Sparkle,
 } from "@phosphor-icons/react";
 
 // ─── Types ─────────────────────────────────────────────────
@@ -386,7 +387,7 @@ export default function OnboardingPage() {
     if (!currentStep?.key) return;
     setSelectedChip(value);
     setAnswers((prev) => ({ ...prev, [currentStep.key!]: value }));
-    setTimeout(goNext, 600);
+    setTimeout(goNext, 1200);
   }
 
   function handleInputContinue() {
@@ -468,79 +469,89 @@ export default function OnboardingPage() {
           >
             {/* ── Welcome ── */}
             {currentStep?.type === "welcome" && (
-              <div className="flex flex-1 flex-col items-center justify-center px-4 py-12 text-center">
-                <motion.div
-                  initial={{ scale: 0.85 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="mb-8 flex size-20 items-center justify-center rounded-[var(--radius-lg)]"
+              <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 py-12 text-center">
+                <div className="blob-hero" />
+
+                <div
+                  className="relative z-10 w-full max-w-xs rounded-[var(--radius-lg)] px-6 py-8"
                   style={{
-                    background: "color-mix(in oklab, var(--brand-primary) 12%, transparent)",
-                    boxShadow: "0 8px 32px rgba(224,123,64,0.18)",
+                    background: "var(--surface-elevated)",
+                    boxShadow: "var(--shadow-md)",
                   }}
                 >
-                  <Brain size={40} weight="duotone" style={{ color: "var(--brand-primary)" }} />
-                </motion.div>
-
-                <motion.h1
-                  initial={{ y: 16 }}
-                  animate={{ y: 0 }}
-                  transition={{ delay: 0.12, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-display text-3xl font-bold leading-tight"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  Tu diagnóstico<br />emocional del dinero
-                </motion.h1>
-
-                <motion.p
-                  initial={{ y: 16 }}
-                  animate={{ y: 0 }}
-                  transition={{ delay: 0.22, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="mt-4 text-base leading-relaxed"
-                  style={{ color: "var(--text-secondary)" }}
-                >
-                  8 preguntas. 4 minutos. Vamos a identificar la herida emocional que está detrás de tu patrón con el dinero.
-                </motion.p>
-
-                <motion.div
-                  initial={{ y: 16 }}
-                  animate={{ y: 0 }}
-                  transition={{ delay: 0.32, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="mt-8 flex flex-col gap-3 text-sm"
-                  style={{ color: "var(--text-muted)" }}
-                >
-                  {["Gratis — sin tarjeta", "Solo para ti, privado", "Basado en el Método RAÍZ™"].map(
-                    (item, i) => (
-                      <div key={i} className="flex items-center justify-center gap-2">
-                        <Check size={14} weight="bold" style={{ color: "var(--brand-primary)" }} />
-                        <span>{item}</span>
-                      </div>
-                    )
-                  )}
-                </motion.div>
-
-                <motion.div
-                  initial={{ y: 16 }}
-                  animate={{ y: 0 }}
-                  transition={{ delay: 0.42, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="mt-10 w-full max-w-xs"
-                >
-                  <motion.button
-                    whileTap={{ scale: 0.97 }}
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 80, damping: 18 }}
-                    onClick={goNext}
-                    className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+                  <motion.div
+                    initial={{ scale: 0.85 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="mx-auto mb-8 flex size-20 items-center justify-center rounded-[var(--radius-lg)]"
                     style={{
-                      background: "var(--brand-primary)",
-                      color: "white",
-                      boxShadow: "0 4px 18px rgba(224,123,64,0.35)",
+                      background: "var(--soft3d-bg)",
+                      boxShadow: "var(--soft3d-shadow-lg)",
                     }}
                   >
-                    Empezar mi diagnóstico
-                    <ArrowRight size={18} weight="bold" />
-                  </motion.button>
-                </motion.div>
+                    <Brain size={40} weight="duotone" color="white" />
+                  </motion.div>
+
+                  <motion.h1
+                    initial={{ y: 16 }}
+                    animate={{ y: 0 }}
+                    transition={{ delay: 0.12, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="font-display text-3xl font-bold leading-tight"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    Tu diagnóstico<br />emocional del dinero
+                  </motion.h1>
+
+                  <motion.p
+                    initial={{ y: 16 }}
+                    animate={{ y: 0 }}
+                    transition={{ delay: 0.22, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="mt-4 text-base leading-relaxed"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    8 preguntas. 4 minutos. Vamos a identificar la herida emocional que está detrás de tu patrón con el dinero.
+                  </motion.p>
+
+                  <motion.div
+                    initial={{ y: 16 }}
+                    animate={{ y: 0 }}
+                    transition={{ delay: 0.32, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="mt-6 flex flex-col gap-3 text-sm"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    {["Gratis — sin tarjeta", "Solo para ti, privado", "Basado en el Método RAÍZ™"].map(
+                      (item, i) => (
+                        <div key={i} className="flex items-center justify-center gap-2">
+                          <Check size={14} weight="bold" style={{ color: "var(--brand-primary)" }} />
+                          <span>{item}</span>
+                        </div>
+                      )
+                    )}
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ y: 16 }}
+                    animate={{ y: 0 }}
+                    transition={{ delay: 0.42, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="mt-8 w-full"
+                  >
+                    <motion.button
+                      whileTap={{ scale: 0.97 }}
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ type: "spring", stiffness: 80, damping: 18 }}
+                      onClick={goNext}
+                      className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
+                      style={{
+                        background: "var(--brand-primary)",
+                        color: "white",
+                        boxShadow: "0 4px 18px rgba(224,123,64,0.35)",
+                      }}
+                    >
+                      Empezar mi diagnóstico
+                      <ArrowRight size={18} weight="bold" />
+                    </motion.button>
+                  </motion.div>
+                </div>
               </div>
             )}
 
@@ -663,9 +674,12 @@ export default function OnboardingPage() {
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mx-auto mb-6 flex size-20 items-center justify-center rounded-[var(--radius-lg)]"
-                    style={{ background: "color-mix(in oklab, var(--brand-primary) 10%, transparent)" }}
+                    style={{
+                      background: "var(--soft3d-bg)",
+                      boxShadow: "var(--soft3d-shadow-lg)",
+                    }}
                   >
-                    <HandHeart size={40} weight="duotone" style={{ color: "var(--brand-primary)" }} />
+                    <HandHeart size={40} weight="duotone" color="white" />
                   </motion.div>
 
                   <motion.h2
@@ -810,8 +824,17 @@ export default function OnboardingPage() {
                   <motion.div
                     initial={{ scale: 0.9 }}
                     animate={{ scale: 1 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ type: "spring", stiffness: 80, damping: 12 }}
+                    className="relative"
                   >
+                    <motion.span
+                      initial={{ scale: 0, rotate: -20 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ delay: 0.35, type: "spring", stiffness: 200, damping: 10 }}
+                      className="absolute -right-1 -top-1"
+                    >
+                      <Sparkle size={22} weight="fill" style={{ color: "var(--brand-gold)" }} />
+                    </motion.span>
                     <p className="text-sm font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
                       Tu Perfil Emocional del Dinero™
                     </p>

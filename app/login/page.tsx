@@ -6,10 +6,12 @@ import Link from "next/link";
 import { ArrowRight, EnvelopeSimple, Check, GoogleLogo, SpinnerGap } from "@phosphor-icons/react";
 
 type Mode = "idle" | "sending" | "sent" | "error";
+type LoginMode = "create" | "login";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [mode, setMode] = useState<Mode>("idle");
+  const [loginMode, setLoginMode] = useState<LoginMode>("create");
   const prefersReduced = useReducedMotion();
   const emailRef = useRef<HTMLInputElement>(null);
 
@@ -55,7 +57,8 @@ export default function LoginPage() {
         </div>
       </header>
 
-      <main className="flex flex-1 flex-col justify-center px-4 pb-12 pt-4">
+      <main className="relative flex flex-1 flex-col justify-center px-4 pb-12 pt-4">
+        <div className="blob-hero" />
         <div className="mx-auto w-full max-w-sm">
 
           <motion.div
@@ -67,10 +70,12 @@ export default function LoginPage() {
               className="font-display text-3xl font-bold leading-tight"
               style={{ color: "var(--text-primary)" }}
             >
-              Crea tu cuenta
+              {loginMode === "create" ? "Crea tu cuenta" : "Bienvenida de vuelta"}
             </h1>
             <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-              Tu progreso y diagnóstico quedaron guardados. Crea una cuenta para protegerlos y empezar tu ruta.
+              {loginMode === "create"
+                ? "Tu progreso y diagnóstico quedaron guardados. Crea una cuenta para protegerlos y empezar tu ruta."
+                : "Ingresa tu correo para recibir tu enlace de acceso. Sin contraseña."}
             </p>
           </motion.div>
 
@@ -153,7 +158,7 @@ export default function LoginPage() {
                     transition={{ type: "spring", stiffness: 80, damping: 18 }}
                     type="submit"
                     disabled={!isValidEmail(email) || mode === "sending"}
-                    className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+                    className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
                     style={{
                       background: isValidEmail(email) ? "var(--brand-primary)" : "var(--surface-sunken)",
                       color: isValidEmail(email) ? "white" : "var(--text-muted)",
@@ -180,7 +185,7 @@ export default function LoginPage() {
 
           {/* Divider */}
           {mode !== "sent" && (
-            <div className="my-5 flex items-center gap-3">
+            <div className="my-6 flex items-center gap-3">
               <div className="flex-1" style={{ height: "1px", background: "var(--border-subtle)" }} />
               <span className="text-xs" style={{ color: "var(--text-muted)" }}>o continúa con</span>
               <div className="flex-1" style={{ height: "1px", background: "var(--border-subtle)" }} />
@@ -194,12 +199,14 @@ export default function LoginPage() {
               transition={{ type: "spring", stiffness: 80, damping: 18 }}
               onClick={handleGoogle}
               disabled={mode === "sending"}
-              className="flex w-full items-center justify-center gap-3 rounded-full py-4 text-base font-medium"
+              className="flex w-full items-center justify-center gap-3 rounded-[var(--radius-md)] py-4 text-base font-medium"
               style={{
-                background: "var(--surface-elevated)",
-                border: "1.5px solid var(--border-subtle)",
-                color: "var(--text-primary)",
-                boxShadow: "var(--shadow-sm)",
+                background: isValidEmail(email) ? "var(--surface-elevated)" : "transparent",
+                border: `1.5px solid ${isValidEmail(email) ? "var(--border-subtle)" : "color-mix(in oklab, var(--border-subtle) 60%, transparent)"}`,
+                color: isValidEmail(email) ? "var(--text-primary)" : "var(--text-muted)",
+                boxShadow: isValidEmail(email) ? "var(--shadow-sm)" : "none",
+                opacity: isValidEmail(email) ? 1 : 0.7,
+                transition: "all 200ms",
               }}
             >
               <GoogleLogo size={20} weight="bold" />
@@ -219,15 +226,15 @@ export default function LoginPage() {
             <br />Sin contraseña — acceso por enlace mágico o Google.
           </p>
 
-          {/* Already have account */}
+          {/* Toggle login/create */}
           <p className="mt-4 text-center text-xs" style={{ color: "var(--text-muted)" }}>
-            ¿Ya tienes cuenta?{" "}
+            {loginMode === "create" ? "¿Ya tienes cuenta?" : "¿Eres nueva aquí?"}{" "}
             <button
-              onClick={() => setEmail("")}
+              onClick={() => setLoginMode((m) => (m === "create" ? "login" : "create"))}
               className="font-medium"
               style={{ color: "var(--brand-primary)" }}
             >
-              Entrar
+              {loginMode === "create" ? "Entrar" : "Crear cuenta"}
             </button>
           </p>
         </div>
