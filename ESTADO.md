@@ -43,7 +43,11 @@ Stack: Next.js 16 (App Router, TypeScript, Tailwind) + Supabase (Auth + Postgres
   - Componentes `ScoreBars` y `PathCard`.
   - Verificado: `tsc` ✅ · `build` ✅ · **test de lógica** (área = dimensión más baja, puntajes 0–100) ✅ · captura revisada.
 
-- [ ] **Bloque 6 — Pantalla principal + redirección**
+- [x] **Bloque 6 — Pantalla principal + redirección** ✅
+  - `/dashboard`: enruta por progreso (onboarding→diagnóstico→dashboard), muestra saludo, foco, ruta, puntajes y acceso al chat.
+  - Redirección tras el diagnóstico ("Ir a mi espacio" → /dashboard) + guardas de flujo.
+  - Verificado: `tsc` ✅ · `build` ✅
+
 - [ ] **Bloque 7 — Chat IA + ruta personalizada**
 
 ## Decisiones de producto (MVP)
