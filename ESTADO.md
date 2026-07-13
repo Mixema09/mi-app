@@ -1,9 +1,9 @@
 # ESTADO — Reconecta AI
 Última actualización: 2026-07-12 | Sesión actual: 3
 
-🔧 CHECKPOINT — Sesión 3 R7 EN REVISIÓN: 4 cambios estructurales aplicados sobre R6 (§3B sección oscura, §4B milestones stepper numerado movido tras §4, trust strip dividers centrados, §6 comparador mercado Psicóloga/Curso/Reconecta) · tsc ✓ · screenshot /tmp/r7-landing.png · awaiting revisor-visual R7
-Scores previos: R5 31/40·16/20·18/20 | R6 30/40·15/20·18/20 (bajó por monotonía borderLeft en §3B/§7B/FAQ)
-Próximo paso EXACTO: recibir veredicto R7 → si ≥36/40 Y ≥16/20 Y ≥16/20 → commit+push → COMPLETADA → Sesión 4
+🔧 CHECKPOINT — Sesión 3 R9 EN REVISIÓN: 5 fixes quirúrgicos sobre R8 (§4B→surface-base restaura ritmo, §6 checklist→Diagnóstico+Perfil™+Ruta, §3B blob opacity 0.32+blur4px, §5 CTA outline→"Empezar mi diagnóstico gratuito"+py-3, §2 cards numeradas 01-04+borderLeft card1) · tsc ✓ build ✓ · screenshot /tmp/r9-landing.png · awaiting revisor-visual R9
+Scores previos: R5 31/40·16/20·18/20 | R6 30/40·15/20·18/20 | R7 33/40·16/20·18/20 | R8 31/40·15/20·18/20 (regresión §4B→elevated)
+Próximo paso EXACTO: recibir veredicto R9 → si ≥36/40 Y ≥16/20 Y ≥16/20 → commit+push → COMPLETADA → Sesión 4
 
 ## Qué es esta app
 Reconecta AI: plataforma de sanación emocional de la relación con el dinero usando el Método RAÍZ™, IA conversacional con memoria y contenido personalizado. Para adultos de LATAM con bloqueos económicos de origen emocional. Modelo: Onboarding-first anónimo → paywall post-diagnóstico. $7.49/mes · $59.99/año.

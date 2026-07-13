@@ -653,12 +653,24 @@ export default function LandingPage() {
               <Reveal key={i} delay={i * 0.07}>
                 <div
                   className="flex gap-4 rounded-[var(--radius-md)] p-4"
-                  style={{ background: "var(--surface-sunken)", boxShadow: "var(--shadow-sm)" }}
+                  style={{
+                    background: "var(--surface-sunken)",
+                    boxShadow: "var(--shadow-sm)",
+                    borderLeft: i === 0 ? "2px solid var(--brand-primary)" : undefined,
+                  }}
                 >
                   <Soft3DIcon>{item.icon}</Soft3DIcon>
-                  <p className="self-center text-sm leading-relaxed" style={{ color: "var(--text-primary)" }}>
-                    {item.text}
-                  </p>
+                  <div className="self-center min-w-0">
+                    <span
+                      className="block text-xs font-semibold mb-0.5"
+                      style={{ color: "var(--brand-primary)", opacity: 0.7 }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <p className="text-sm leading-relaxed" style={{ color: "var(--text-primary)" }}>
+                      {item.text}
+                    </p>
+                  </div>
                 </div>
               </Reveal>
             ))}
@@ -754,7 +766,7 @@ export default function LandingPage() {
       {/* §3B PRUEBA SOCIAL — BETA                           */}
       {/* ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden px-4 py-16" style={{ background: "var(--text-primary)" }}>
-        <Blob color="gold" style={{ right: "-15%", top: "-20%", width: "280px", height: "280px", opacity: 0.18 }} />
+        <Blob color="gold" style={{ right: "-15%", top: "-20%", width: "280px", height: "280px", opacity: 0.32, filter: "blur(4px)" }} />
         <div className="relative mx-auto max-w-sm">
           <Reveal>
             <span
@@ -881,7 +893,7 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────── */}
       {/* §4B HITOS DEL PROCESO                             */}
       {/* ──────────────────────────────────────────────────── */}
-      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
+      <section className="px-4 py-16" style={{ background: "var(--surface-base)" }}>
         <div className="mx-auto max-w-sm">
           <Reveal>
             <Kicker>Lo que sentirás en los primeros días</Kicker>
@@ -1018,7 +1030,7 @@ export default function LandingPage() {
               <motion.button
                 whileTap={isPending ? undefined : { scale: 0.97 }}
                 disabled={isPending}
-                className="flex w-full items-center justify-center gap-2 rounded-full border-2 py-4 text-sm font-semibold"
+                className="flex w-full items-center justify-center gap-2 rounded-full border-2 py-3 text-sm font-semibold"
                 style={{
                   borderColor: "var(--brand-primary)",
                   color: "var(--brand-primary)",
@@ -1035,7 +1047,7 @@ export default function LandingPage() {
                   </>
                 ) : (
                   <>
-                    Descubrir mi herida del dinero
+                    Empezar mi diagnóstico gratuito
                     <ArrowRight weight="bold" size={16} />
                   </>
                 )}
@@ -1177,7 +1189,7 @@ export default function LandingPage() {
                 {[
                   "7 días de prueba completa sin cargo",
                   "Cancela cuando quieras, sin penalización",
-                  "Soporte en español, siempre",
+                  "Diagnóstico + Perfil Emocional™ + Ruta Personalizada",
                 ].map((text, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <CustomCheck />
