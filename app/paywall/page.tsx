@@ -95,6 +95,7 @@ export default function PaywallPage() {
   const [name, setName] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [displayPrice, setDisplayPrice] = useState(0);
+  const [showSticky, setShowSticky] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("raiz_herida") as Herida | null;
@@ -106,6 +107,12 @@ export default function PaywallPage() {
         if (parsed.name) setName(parsed.name.split(" ")[0]);
       } catch {}
     }
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => setShowSticky(window.scrollY > 200);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -123,6 +130,9 @@ export default function PaywallPage() {
   }, [billing]);
 
   const heridaData = HERIDAS[herida];
+  const testimoniosOrdenados = [...TESTIMONIOS].sort((a, b) =>
+    a.herida === heridaData.title ? -1 : b.herida === heridaData.title ? 1 : 0
+  );
   const price = billing === "annual" ? "$4.99" : "$7.49";
   const yearTotal = "$59.99";
   const trialEnd = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString("es", {
@@ -168,14 +178,14 @@ export default function PaywallPage() {
         </div>
       </header>
 
-      <main className="relative px-4 pb-16">
+      <main className="relative px-4 pb-36">
         <div className="blob-hero" />
         <div className="mx-auto max-w-sm">
 
           {/* Hero — resultado personalizado */}
           <motion.div
-            initial={prefersReduced ? false : { y: 20 }}
-            animate={{ y: 0 }}
+            initial={{ y: prefersReduced ? 0 : 20, opacity: prefersReduced ? 1 : 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="pt-6 text-center"
           >
@@ -193,7 +203,7 @@ export default function PaywallPage() {
               Tu diagnóstico está listo
             </p>
             <h1
-              className="mt-2 font-display text-2xl font-bold leading-tight"
+              className="mt-2 font-display text-4xl font-bold leading-tight"
               style={{ color: "var(--text-primary)" }}
             >
               {name ? `${name}, identificamos tu` : "Identificamos tu"}{" "}
@@ -206,8 +216,8 @@ export default function PaywallPage() {
 
           {/* Ruta personalizada (preview) */}
           <motion.div
-            initial={prefersReduced ? false : { y: 20 }}
-            animate={{ y: 0 }}
+            initial={{ y: prefersReduced ? 0 : 20, opacity: prefersReduced ? 1 : 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-6 rounded-[var(--radius-md)] overflow-hidden"
             style={{
@@ -251,8 +261,8 @@ export default function PaywallPage() {
 
           {/* Features */}
           <motion.div
-            initial={prefersReduced ? false : { y: 20 }}
-            animate={{ y: 0 }}
+            initial={{ y: prefersReduced ? 0 : 20, opacity: prefersReduced ? 1 : 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.16, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-5 flex flex-col gap-3"
           >
@@ -277,12 +287,12 @@ export default function PaywallPage() {
 
           {/* Testimonios */}
           <motion.div
-            initial={prefersReduced ? false : { y: 20 }}
-            animate={{ y: 0 }}
+            initial={{ y: prefersReduced ? 0 : 20, opacity: prefersReduced ? 1 : 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.22, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-5 flex flex-col gap-3"
           >
-            {TESTIMONIOS.map((t, i) => (
+            {testimoniosOrdenados.map((t, i) => (
               <div
                 key={i}
                 className="rounded-[var(--radius-md)] p-4"
@@ -320,8 +330,8 @@ export default function PaywallPage() {
 
           {/* Pricing toggle */}
           <motion.div
-            initial={prefersReduced ? false : { y: 20 }}
-            animate={{ y: 0 }}
+            initial={{ y: prefersReduced ? 0 : 20, opacity: prefersReduced ? 1 : 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.28, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-8"
           >
@@ -409,8 +419,8 @@ export default function PaywallPage() {
 
           {/* CTA */}
           <motion.div
-            initial={prefersReduced ? false : { y: 20 }}
-            animate={{ y: 0 }}
+            initial={{ y: prefersReduced ? 0 : 20, opacity: prefersReduced ? 1 : 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.36, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="mt-5"
           >
@@ -464,6 +474,44 @@ export default function PaywallPage() {
 
         </div>
       </main>
+
+      {/* Sticky CTA — aparece al pasar el hero */}
+      <AnimatePresence>
+        {showSticky && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pt-3"
+            style={{ background: "var(--surface-base)", borderTop: "1px solid var(--border-subtle)", boxShadow: "0 -4px 16px rgba(45,24,16,0.08)" }}
+          >
+            <div className="mx-auto max-w-sm">
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleCTA}
+                disabled={isPending}
+                className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
+                style={{
+                  background: "var(--brand-primary)",
+                  color: "white",
+                  boxShadow: "0 4px 18px rgba(224,123,64,0.35)",
+                  opacity: isPending ? 0.85 : 1,
+                }}
+              >
+                {isPending ? (
+                  <><SpinnerGap size={18} weight="bold" className="animate-spin" />Iniciando...</>
+                ) : (
+                  <>Empezar mis 7 días gratis <ArrowRight size={18} weight="bold" /></>
+                )}
+              </motion.button>
+              <p className="mt-1 text-center text-xs" style={{ color: "var(--text-muted)" }}>
+                Sin tarjeta hoy · Cancela cuando quieras
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

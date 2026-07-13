@@ -387,7 +387,7 @@ export default function OnboardingPage() {
     if (!currentStep?.key) return;
     setSelectedChip(value);
     setAnswers((prev) => ({ ...prev, [currentStep.key!]: value }));
-    setTimeout(goNext, 1200);
+    // No auto-avance — usuario confirma con "Continuar"
   }
 
   function handleInputContinue() {
@@ -493,8 +493,8 @@ export default function OnboardingPage() {
                   </motion.div>
 
                   <motion.h1
-                    initial={{ y: 16 }}
-                    animate={{ y: 0 }}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.12, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="font-display text-3xl font-bold leading-tight"
                     style={{ color: "var(--text-primary)" }}
@@ -503,8 +503,8 @@ export default function OnboardingPage() {
                   </motion.h1>
 
                   <motion.p
-                    initial={{ y: 16 }}
-                    animate={{ y: 0 }}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.22, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-4 text-base leading-relaxed"
                     style={{ color: "var(--text-secondary)" }}
@@ -513,15 +513,15 @@ export default function OnboardingPage() {
                   </motion.p>
 
                   <motion.div
-                    initial={{ y: 16 }}
-                    animate={{ y: 0 }}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.32, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="mt-6 flex flex-col gap-3 text-sm"
-                    style={{ color: "var(--text-muted)" }}
+                    className="mt-6 rounded-[var(--radius-md)] p-4 text-sm"
+                    style={{ background: "var(--surface-sunken)", color: "var(--text-muted)" }}
                   >
                     {["Gratis — sin tarjeta", "Solo para ti, privado", "Basado en el Método RAÍZ™"].map(
                       (item, i) => (
-                        <div key={i} className="flex items-center justify-center gap-2">
+                        <div key={i} className={`flex items-center gap-2${i > 0 ? " mt-2" : ""}`}>
                           <Check size={14} weight="bold" style={{ color: "var(--brand-primary)" }} />
                           <span>{item}</span>
                         </div>
@@ -530,8 +530,8 @@ export default function OnboardingPage() {
                   </motion.div>
 
                   <motion.div
-                    initial={{ y: 16 }}
-                    animate={{ y: 0 }}
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.42, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-8 w-full"
                   >
@@ -540,7 +540,7 @@ export default function OnboardingPage() {
                       whileHover={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 80, damping: 18 }}
                       onClick={goNext}
-                      className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
+                      className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
                       style={{
                         background: "var(--brand-primary)",
                         color: "white",
@@ -552,6 +552,19 @@ export default function OnboardingPage() {
                     </motion.button>
                   </motion.div>
                 </div>
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.55, duration: 0.4 }}
+                  className="relative z-10 mt-5 text-xs"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  ¿Ya tienes cuenta?{" "}
+                  <Link href="/login" style={{ color: "var(--brand-primary)" }}>
+                    Entrar →
+                  </Link>
+                </motion.p>
               </div>
             )}
 
@@ -650,7 +663,7 @@ export default function OnboardingPage() {
                     </p>
                   )}
 
-                  <div className="mt-6 flex flex-col gap-3">
+                  <div className="mt-6 flex flex-col gap-3 pb-4">
                     {currentStep.options?.map((opt) => (
                       <Chip
                         key={opt.value}
@@ -662,6 +675,37 @@ export default function OnboardingPage() {
                     ))}
                   </div>
                 </div>
+
+                {/* CTA sticky — aparece solo cuando hay selección */}
+                <AnimatePresence>
+                  {selectedChip && (
+                    <motion.div
+                      initial={{ y: 24, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: 16, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      className="sticky bottom-0 px-0 pb-safe-bottom"
+                      style={{ background: "var(--surface-base)" }}
+                    >
+                      <div className="py-4">
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          transition={{ type: "spring", stiffness: 80, damping: 18 }}
+                          onClick={goNext}
+                          className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+                          style={{
+                            background: "var(--brand-primary)",
+                            color: "white",
+                            boxShadow: "0 4px 18px rgba(224,123,64,0.28)",
+                          }}
+                        >
+                          Continuar
+                          <ArrowRight size={18} weight="bold" />
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
 

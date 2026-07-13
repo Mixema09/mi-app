@@ -2,8 +2,12 @@
 Última actualización: 2026-07-13 | Sesión actual: 4
 
 ✅ Sesión 3 CERRADA — Landing pausada por decisión del usuario. Score final: 30/40·15/20·18/20 (11 rondas). Tag git: landing-v1-stable (commit 38c2f35). Pulido fino diferido a Sesión 7. NO retocar landing hasta solicitud explícita.
-🔧 CHECKPOINT ACTIVO — Sesión 4 RONDA 2 EN REVISIÓN: las 3 pantallas construidas, fix de blank-render aplicado, revisor-visual corriendo.
-Próximo paso EXACTO: esperar scores del revisor-visual → si ≥36/40 y ≥16/20 en las 3 → cerrar Sesión 4 → empezar Sesión 5 (app interna: dashboard + chat IA + ruta + gamificación).
+🔧 CHECKPOINT ACTIVO — Sesión 4 RONDA 4 EN REVISIÓN: fixes aplicados en las 3 pantallas, revisores corriendo.
+Scores ronda 3: onboarding 30/40·13/20 | paywall 30/40·15/20·16/20 | login 27/40·14/20.
+Fixes ronda 4 onboarding: checkmarks en surface-sunken, escape "Ya tengo cuenta", opacity fade-in restaurado.
+Fixes ronda 4 login: Google siempre opaco, CTA outline sin email, magic link explanation, blob visible.
+Fixes ronda 4 paywall: H1 text-4xl (36px), opacity:0 en todos los initial, sticky CTA scroll>200px, testimonios ordenados por herida coincidente.
+Próximo paso EXACTO: esperar scores ronda 4 → si ≥36/40 y ≥16/20 en las 3 → cerrar Sesión 4 → empezar Sesión 5.
 
 ## Qué es esta app
 Reconecta AI: plataforma de sanación emocional de la relación con el dinero usando el Método RAÍZ™, IA conversacional con memoria y contenido personalizado. Para adultos de LATAM con bloqueos económicos de origen emocional. Modelo: Onboarding-first anónimo → paywall post-diagnóstico. $7.49/mes · $59.99/año.
@@ -93,12 +97,13 @@ Reconecta AI: plataforma de sanación emocional de la relación con el dinero us
 - /onboarding: 12 pasos (welcome→8 preguntas→recognition→loading→reveal) — Perfil Emocional del Dinero™ engine (4 arquetipos) — commit 8b9279d
 - /paywall: muestra herida + ruta preview + features + 2 testimonios + pricing toggle + CTA trial — commit activo
 - /login: magic link + Google OAuth stub, useReducedMotion integrado, error Google arreglado — commit activo
-- FIX CRÍTICO APLICADO: opacity:0 eliminado de todos los initial states (causa de blank render en SSR/Playwright)
-- FIX ONBOARDING: emoji 🫂 → HandHeart (Phosphor), auto-avance 300ms → 600ms
-- FIX PAYWALL: back button (router.back()), 2 testimonios agregados
-- FIX LOGIN: useReducedMotion integrado, mensaje de error de Google arreglado
-- Score anterior (ronda 1, blank render): onboarding 21/40·4/20 · paywall 20/40·4/20·13/20 · login 22/40·3/20
-- Score ronda 2: PENDIENTE (revisor-visual corriendo)
+- FIX RONDA 2: opacity:0 eliminado de initial states (blank render en SSR/Playwright)
+- FIX RONDA 3: blob-hero siempre visible (CSS fuera del media query), soft-3D en iconos hero, AnimatePresence heading en login, botón Google siempre habilitado, sticky Continuar chip, spring celebration reveal
+- FIX RONDA 4: H1 paywall text-4xl, opacity:0 en todos los fade-up del paywall, sticky CTA paywall (scroll>200px), testimonios ordenados por herida, escape login onboarding, opacity fade-in restaurado onboarding
+- Scores ronda 1: onboarding 21/40·4/20 | paywall 20/40·4/20·13/20 | login 22/40·3/20
+- Scores ronda 2: onboarding 22/40·4/20 (blank render resuelto, craft igual) | paywall similar | login similar
+- Scores ronda 3: onboarding 30/40·13/20 | paywall 30/40·15/20·16/20 | login 27/40·14/20
+- Scores ronda 4: PENDIENTE (revisores corriendo)
 
 ## Próximas sesiones 📋
 - Sesión 4 (ACTUAL): cerrar con gates ≥36/40 y ≥16/20 en las 3 pantallas

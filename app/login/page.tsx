@@ -40,6 +40,17 @@ export default function LoginPage() {
   const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
   const dur = prefersReduced ? 0 : 0.45;
 
+  const headings = {
+    create: {
+      title: "Crea tu cuenta",
+      subtitle: "Tu progreso y diagnóstico quedaron guardados. Crea una cuenta para protegerlos y empezar tu ruta.",
+    },
+    login: {
+      title: "Bienvenida de vuelta",
+      subtitle: "Ingresa tu correo para recibir tu enlace de acceso.",
+    },
+  };
+
   return (
     <div
       className="flex min-h-dvh flex-col"
@@ -61,28 +72,31 @@ export default function LoginPage() {
         <div className="blob-hero" />
         <div className="mx-auto w-full max-w-sm">
 
-          <motion.div
-            initial={{ y: prefersReduced ? 0 : 16 }}
-            animate={{ y: 0 }}
-            transition={{ duration: dur, ease }}
-          >
-            <h1
-              className="font-display text-3xl font-bold leading-tight"
-              style={{ color: "var(--text-primary)" }}
+          {/* Heading — con transición al cambiar modo */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={loginMode}
+              initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : -8 }}
+              transition={{ duration: 0.25, ease }}
             >
-              {loginMode === "create" ? "Crea tu cuenta" : "Bienvenida de vuelta"}
-            </h1>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-              {loginMode === "create"
-                ? "Tu progreso y diagnóstico quedaron guardados. Crea una cuenta para protegerlos y empezar tu ruta."
-                : "Ingresa tu correo para recibir tu enlace de acceso. Sin contraseña."}
-            </p>
-          </motion.div>
+              <h1
+                className="font-display text-3xl font-bold leading-tight"
+                style={{ color: "var(--text-primary)" }}
+              >
+                {headings[loginMode].title}
+              </h1>
+              <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                {headings[loginMode].subtitle}
+              </p>
+            </motion.div>
+          </AnimatePresence>
 
           {/* Magic link form */}
           <motion.div
-            initial={{ y: prefersReduced ? 0 : 16 }}
-            animate={{ y: 0 }}
+            initial={{ y: prefersReduced ? 0 : 16, opacity: prefersReduced ? 1 : 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ delay: prefersReduced ? 0 : 0.1, duration: dur, ease }}
             className="mt-8"
           >
@@ -105,7 +119,7 @@ export default function LoginPage() {
                     Revisa tu correo
                   </p>
                   <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                    Te enviamos un enlace mágico a <strong>{email}</strong>. Toca el enlace y entras directo — sin contraseña.
+                    Te enviamos un link a <strong>{email}</strong>. Tócalo y entras directo — sin contraseña, sin app extra.
                   </p>
                   <button
                     onClick={() => setMode("idle")}
@@ -160,10 +174,11 @@ export default function LoginPage() {
                     disabled={!isValidEmail(email) || mode === "sending"}
                     className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
                     style={{
-                      background: isValidEmail(email) ? "var(--brand-primary)" : "var(--surface-sunken)",
+                      background: isValidEmail(email) ? "var(--brand-primary)" : "transparent",
+                      border: `1.5px solid ${isValidEmail(email) ? "transparent" : "color-mix(in oklab, var(--brand-primary) 35%, transparent)"}`,
                       color: isValidEmail(email) ? "white" : "var(--text-muted)",
                       boxShadow: isValidEmail(email) ? "0 4px 18px rgba(224,123,64,0.28)" : "none",
-                      transition: "background 200ms, color 200ms, box-shadow 200ms",
+                      transition: "all 200ms",
                     }}
                   >
                     {mode === "sending" ? (
@@ -178,6 +193,12 @@ export default function LoginPage() {
                       </>
                     )}
                   </motion.button>
+
+                  {/* Magic link explanation */}
+                  <p className="text-center text-xs leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                    Te enviamos un link a tu correo — solo tócalo y entras.
+                    <br />Sin contraseña, sin app extra.
+                  </p>
                 </motion.form>
               )}
             </AnimatePresence>
@@ -192,7 +213,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Google */}
+          {/* Google — siempre visible y habilitado (OAuth independiente del email) */}
           {mode !== "sent" && (
             <motion.button
               whileTap={{ scale: 0.97 }}
@@ -201,12 +222,10 @@ export default function LoginPage() {
               disabled={mode === "sending"}
               className="flex w-full items-center justify-center gap-3 rounded-[var(--radius-md)] py-4 text-base font-medium"
               style={{
-                background: isValidEmail(email) ? "var(--surface-elevated)" : "transparent",
-                border: `1.5px solid ${isValidEmail(email) ? "var(--border-subtle)" : "color-mix(in oklab, var(--border-subtle) 60%, transparent)"}`,
-                color: isValidEmail(email) ? "var(--text-primary)" : "var(--text-muted)",
-                boxShadow: isValidEmail(email) ? "var(--shadow-sm)" : "none",
-                opacity: isValidEmail(email) ? 1 : 0.7,
-                transition: "all 200ms",
+                background: "var(--surface-elevated)",
+                border: "1.5px solid var(--border-subtle)",
+                color: "var(--text-primary)",
+                boxShadow: "var(--shadow-sm)",
               }}
             >
               <GoogleLogo size={20} weight="bold" />
@@ -214,7 +233,7 @@ export default function LoginPage() {
             </motion.button>
           )}
 
-          {/* Legal */}
+          {/* Legal — separado en dos bloques */}
           <p
             className="mt-6 text-center text-xs leading-relaxed"
             style={{ color: "var(--text-muted)" }}
@@ -223,7 +242,6 @@ export default function LoginPage() {
             <Link href="/terminos" style={{ color: "var(--brand-primary)" }}>Términos</Link>{" "}
             y la{" "}
             <Link href="/privacidad" style={{ color: "var(--brand-primary)" }}>Política de privacidad</Link>.
-            <br />Sin contraseña — acceso por enlace mágico o Google.
           </p>
 
           {/* Toggle login/create */}
