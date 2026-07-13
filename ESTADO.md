@@ -17,7 +17,13 @@ Stack: Next.js 16 (App Router, TypeScript, Tailwind) + Supabase (Auth + Postgres
   - Rutas públicas: `/`, `/login`, `/registro`, `/recuperar-password`, `/actualizar-password`, `/auth/*`.
   - Verificado: `tsc --noEmit` ✅ · `next build` ✅
 
-- [ ] **Bloque 2 — Tablas reales + RLS**
+- [x] **Bloque 2 — Tablas reales + RLS** ✅
+  - Tablas creadas en Supabase (proyecto estaba pausado → reactivado): `profiles`, `onboarding_responses`, `diagnostic_results`, `personalized_paths`, `chat_conversations`, `chat_messages`.
+  - RLS habilitado en las 6 tablas; cada usuaria solo accede a sus filas (`auth.uid()`).
+  - Trigger `on_auth_user_created` crea el perfil automáticamente al registrarse.
+  - Funciones endurecidas (search_path fijo, EXECUTE revocado). **Advisors de seguridad: 0 hallazgos.**
+  - Migraciones versionadas en `supabase/migrations/`. Tipos TS en `src/lib/database.types.ts`, dominio en `src/lib/diagnosis.ts`.
+
 - [ ] **Bloque 3 — Auth (registro, login, logout, recuperación)**
 - [ ] **Bloque 4 — Onboarding conectado a Supabase**
 - [ ] **Bloque 5 — Diagnóstico + resultado personalizado**
