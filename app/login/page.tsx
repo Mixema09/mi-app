@@ -57,12 +57,7 @@ export default function LoginPage() {
   }
 
   function handleGoogle() {
-    // Stub: Supabase Google OAuth en Sesión 6
-    setMode("sending");
-    setTimeout(() => {
-      setMode("error");
-      setTimeout(() => emailRef.current?.focus(), 50);
-    }, 1500);
+    // Google OAuth disponible en Sesión 6 — no action
   }
 
   const ease = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -91,13 +86,13 @@ export default function LoginPage() {
             Reconecta<span style={{ color: "var(--brand-primary)" }}>AI</span>
           </Link>
           <Link href="/paywall" className="text-sm" style={{ color: "var(--text-muted)" }}>
-            Volver
+            ← Volver al plan
           </Link>
         </div>
       </header>
 
       <main className="relative flex flex-1 flex-col justify-center px-4 pb-12 pt-4">
-        <div className="blob-hero" />
+        <div className="blob-hero" style={{ width: 300, height: 300, top: -40, right: -60 }} />
         <div className="mx-auto w-full max-w-sm">
 
           {/* Heading — stagger bloque 1 */}
@@ -144,8 +139,8 @@ export default function LoginPage() {
                   style={{ background: "color-mix(in oklab, var(--brand-primary) 8%, transparent)", border: "1px solid color-mix(in oklab, var(--brand-primary) 18%, transparent)" }}
                 >
                   <div
-                    className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full"
-                    style={{ background: "var(--brand-primary)" }}
+                    className="mx-auto mb-4 flex size-12 items-center justify-center rounded-[var(--radius-md)]"
+                    style={{ background: "var(--soft3d-bg)", boxShadow: "var(--soft3d-shadow)" }}
                   >
                     <Check size={24} weight="bold" color="white" />
                   </div>
@@ -182,8 +177,9 @@ export default function LoginPage() {
                   onSubmit={handleMagicLink}
                   className="flex flex-col gap-3"
                 >
-                  <div className="relative">
-                    <label htmlFor="email" className="sr-only">Correo electrónico</label>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor="email" className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>Correo electrónico</label>
+                    <div className="relative">
                     <div
                       className="absolute left-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-[var(--radius-sm)]"
                       style={{ background: "var(--soft3d-bg)", boxShadow: "var(--soft3d-shadow)" }}
@@ -212,15 +208,10 @@ export default function LoginPage() {
                       }}
                     />
                   </div>
+                  </div>
                   {emailTouched && email && !isValidEmail(email) && (
                     <p className="text-xs" style={{ color: "var(--semantic-error)" }}>
                       Ingresa un correo válido (ej: tu@correo.com)
-                    </p>
-                  )}
-
-                  {mode === "error" && (
-                    <p className="text-xs" style={{ color: "var(--semantic-error)" }}>
-                      Google no está disponible en este momento. Ingresa tu correo arriba para entrar sin contraseña — es igual de rápido.
                     </p>
                   )}
 
@@ -284,22 +275,24 @@ export default function LoginPage() {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: prefersReduced ? 0 : 0.18, duration: dur, ease }}
             >
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 80, damping: 18 }}
-                onClick={handleGoogle}
-                disabled={mode === "sending"}
+              <div
                 className="flex w-full items-center justify-center gap-3 rounded-[var(--radius-md)] py-4 text-base font-medium"
                 style={{
                   background: "var(--surface-elevated)",
                   border: "1.5px solid var(--border-subtle)",
-                  color: "var(--text-primary)",
+                  color: "var(--text-muted)",
                   boxShadow: "var(--shadow-sm)",
+                  opacity: 0.5,
+                  cursor: "not-allowed",
+                  userSelect: "none",
                 }}
+                aria-disabled="true"
+                role="button"
               >
                 <GoogleLogo size={20} weight="bold" />
                 Continuar con Google
-              </motion.button>
+                <span className="ml-1 rounded-full px-2 py-0.5 text-xs font-semibold" style={{ background: "var(--surface-sunken)", color: "var(--text-muted)", fontSize: "10px" }}>Pronto</span>
+              </div>
             </motion.div>
           )}
 

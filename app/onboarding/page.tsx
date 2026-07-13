@@ -484,6 +484,8 @@ export default function OnboardingPage() {
   const herida = computeHerida(answers);
   const heridaData = HERIDAS[herida];
   const firstName = answers.name?.split(" ")[0] ?? "";
+  const quizIdx = QUIZ_STEPS.findIndex((q) => q.id === currentStep?.id);
+  const questionNum = quizIdx >= 0 ? quizIdx + 1 : null;
 
   return (
     <div
@@ -508,9 +510,11 @@ export default function OnboardingPage() {
               <Logo />
             </div>
             {currentStep?.type !== "welcome" && currentStep?.type !== "reveal" && (
-              <span className="text-xs tabular-nums" style={{ color: "var(--text-muted)" }}>
-                {pct < 100 ? `${pct}%` : "Listo"}
-              </span>
+              <div className="flex items-center gap-1.5 text-xs tabular-nums" style={{ color: "var(--text-muted)" }}>
+                {questionNum && <span>Pregunta {questionNum} de {QUIZ_COUNT}</span>}
+                {questionNum && <span aria-hidden>·</span>}
+                <span>{pct < 100 ? `${pct}%` : "Listo"}</span>
+              </div>
             )}
           </div>
           {currentStep?.type !== "welcome" && currentStep?.type !== "reveal" && (
@@ -560,7 +564,7 @@ export default function OnboardingPage() {
                   <motion.h1
                     initial={{ y: 16, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.12, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ delay: 0.06, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                     className="font-display text-3xl font-bold leading-tight"
                     style={{ color: "var(--text-primary)" }}
                   >
@@ -570,7 +574,7 @@ export default function OnboardingPage() {
                   <motion.p
                     initial={{ y: 16, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.22, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ delay: 0.12, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-4 text-base leading-relaxed"
                     style={{ color: "var(--text-secondary)" }}
                   >
@@ -580,7 +584,7 @@ export default function OnboardingPage() {
                   <motion.div
                     initial={{ y: 16, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.32, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ delay: 0.18, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-6 rounded-[var(--radius-md)] p-4 text-sm"
                     style={{ background: "var(--surface-sunken)", color: "var(--text-muted)" }}
                   >
@@ -597,7 +601,7 @@ export default function OnboardingPage() {
                   <motion.div
                     initial={{ y: 16, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.42, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ delay: 0.24, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                     className="mt-8 w-full"
                   >
                     <motion.button
@@ -621,7 +625,7 @@ export default function OnboardingPage() {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.55, duration: 0.4 }}
+                  transition={{ delay: 0.30, duration: 0.4 }}
                   className="relative z-10 mt-5 text-xs"
                   style={{ color: "var(--text-muted)" }}
                 >
@@ -747,6 +751,24 @@ export default function OnboardingPage() {
                     ))}
                   </div>
                 </div>
+
+                {/* Hint cuando no hay selección */}
+                <AnimatePresence>
+                  {!selectedChip && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ delay: 0.4, duration: 0.3 }}
+                      className="sticky bottom-0 py-4 text-center pb-safe-bottom"
+                      style={{ background: "var(--surface-base)" }}
+                    >
+                      <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                        Elige una opción para continuar
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* CTA sticky — aparece solo cuando hay selección */}
                 <AnimatePresence>

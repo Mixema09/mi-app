@@ -182,7 +182,7 @@ export default function PaywallPage() {
           <div className="flex items-center gap-2">
             <div className="flex gap-1">
               {[0,1,2].map((i) => (
-                <div key={i} className="size-2 rounded-full" style={{ background: i < 2 ? "var(--brand-primary)" : "var(--border-subtle)", opacity: i < 2 ? 0.4 : 1 }} />
+                <div key={i} className="size-2 rounded-full" style={{ background: "var(--brand-primary)", opacity: i < 2 ? 0.4 : 1 }} />
               ))}
             </div>
             <span className="text-xs font-medium" style={{ color: "var(--brand-primary)" }}>
@@ -206,11 +206,11 @@ export default function PaywallPage() {
             <div
               className="mx-auto mb-4 flex size-16 items-center justify-center rounded-[var(--radius-lg)]"
               style={{
-                background: `color-mix(in oklab, ${heridaData.color} 12%, transparent)`,
-                color: heridaData.color,
+                background: "var(--soft3d-bg)",
+                boxShadow: "var(--soft3d-shadow-lg)",
               }}
             >
-              {heridaData.icon}
+              <span style={{ fontSize: 30 }}>{heridaData.icon}</span>
             </div>
 
             <div
@@ -385,11 +385,9 @@ export default function PaywallPage() {
                   </span>
                 )}
               </div>
-              {billing === "annual" && (
-                <p className="mt-1 text-xs font-medium" style={{ color: "var(--brand-primary)" }}>
-                  2 meses gratis vs. mensual
-                </p>
-              )}
+              <p className="mt-1 text-xs font-medium" style={{ color: "var(--brand-primary)" }}>
+                {billing === "annual" ? "2 meses gratis vs. mensual · " : ""}<span style={{ color: "var(--text-muted)", fontWeight: 400 }}>$0.25/día — menos que un café</span>
+              </p>
 
               <div className="mt-4 flex flex-col gap-2">
                 {[
@@ -462,7 +460,7 @@ export default function PaywallPage() {
                 className="text-xs"
                 style={{ color: "var(--text-muted)" }}
               >
-                Crear cuenta sin plan
+                Continuar sin plan
               </Link>
               <p className="mt-1 text-xs" style={{ color: "var(--text-muted)", opacity: 0.7 }}>
                 (guardamos tu diagnóstico aunque no te suscribas hoy)
