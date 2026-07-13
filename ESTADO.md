@@ -24,7 +24,13 @@ Stack: Next.js 16 (App Router, TypeScript, Tailwind) + Supabase (Auth + Postgres
   - Funciones endurecidas (search_path fijo, EXECUTE revocado). **Advisors de seguridad: 0 hallazgos.**
   - Migraciones versionadas en `supabase/migrations/`. Tipos TS en `src/lib/database.types.ts`, dominio en `src/lib/diagnosis.ts`.
 
-- [ ] **Bloque 3 — Auth (registro, login, logout, recuperación)**
+- [x] **Bloque 3 — Auth (registro, login, logout, recuperación)** ✅
+  - Server actions en `src/lib/actions/auth.ts` (registro, login, logout, solicitar reset, actualizar password) con validación zod.
+  - Páginas: `/registro`, `/login`, `/recuperar-password`, `/actualizar-password` + callback PKCE en `/auth/callback`.
+  - DAL en `src/lib/dal.ts` (`getUser`, `requireUser`, `getProfile`, `getOrigin`).
+  - Landing (`/`) con CTA a registro/login.
+  - Verificado: `tsc` ✅ · `build` ✅ · smoke test (rutas 200, protección de rutas 307→/login) ✅
+
 - [ ] **Bloque 4 — Onboarding conectado a Supabase**
 - [ ] **Bloque 5 — Diagnóstico + resultado personalizado**
 - [ ] **Bloque 6 — Pantalla principal + redirección**
