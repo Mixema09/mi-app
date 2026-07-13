@@ -363,6 +363,7 @@ export default function LandingPage() {
   const [showSticky, setShowSticky] = useState(false);
   const [activeScreen, setActiveScreen] = useState(0);
   const [isPending, setIsPending] = useState(false);
+  const prefersReducedMain = useReducedMotion();
   const sentinelRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -511,7 +512,7 @@ export default function LandingPage() {
       {/* §1  HERO                                           */}
       {/* ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden px-4 pb-16 pt-10">
-        <Blob className="blob-hero" style={{ left: "-20%", top: "-10%", width: "480px", height: "480px", opacity: 0.7 }} />
+        <Blob className="blob-hero" style={{ left: "-20%", top: "-10%", width: "480px", height: "480px", opacity: 0.9, filter: "blur(3px)" }} />
         <Blob color="gold" style={{ right: "-15%", bottom: "5%", width: "300px", height: "300px", opacity: 0.5 }} />
 
         <div className="relative mx-auto max-w-sm">
@@ -579,7 +580,7 @@ export default function LandingPage() {
                 </motion.button>
               </Link>
               <p className="mt-3 text-center text-xs" style={{ color: "var(--text-muted)" }}>
-                Gratis · 5 minutos · Sin tarjeta
+                Gratis · 5 minutos · Sin cargo hoy
               </p>
             </div>
           </HeroReveal>
@@ -846,9 +847,8 @@ export default function LandingPage() {
                     <div
                       className="flex size-10 items-center justify-center rounded-full font-display text-lg font-bold"
                       style={{
-                        background: "var(--soft3d-bg)",
-                        boxShadow: "var(--soft3d-shadow)",
-                        color: "var(--surface-elevated)",
+                        background: "color-mix(in oklab, var(--brand-primary) 14%, transparent)",
+                        color: "var(--brand-primary)",
                       }}
                     >
                       {step.letter}
@@ -881,7 +881,7 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────── */}
       {/* §4B HITOS DEL PROCESO                             */}
       {/* ──────────────────────────────────────────────────── */}
-      <section className="px-4 py-16">
+      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
         <div className="mx-auto max-w-sm">
           <Reveal>
             <Kicker>Lo que sentirás en los primeros días</Kicker>
@@ -962,7 +962,14 @@ export default function LandingPage() {
             {screens.map((screen, i) => {
               const Screen = screen.Screen;
               return (
-                <div key={i} className="flex w-48 shrink-0 snap-center flex-col gap-2">
+                <motion.div
+                  key={i}
+                  className="flex w-48 shrink-0 snap-center flex-col gap-2"
+                  initial={prefersReducedMain ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={prefersReducedMain ? {} : { duration: 0.45, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                >
                   <div
                     style={{
                       aspectRatio: "9 / 16",
@@ -982,7 +989,7 @@ export default function LandingPage() {
                       {screen.sub}
                     </p>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
             <div className="w-4 shrink-0" />
@@ -1403,7 +1410,7 @@ export default function LandingPage() {
               className="mt-3 text-xs"
               style={{ color: "color-mix(in oklab, var(--surface-base) 45%, transparent)" }}
             >
-              Gratis · 5 minutos · Sin tarjeta de crédito
+              Gratis · 5 minutos · Sin cargo hoy
             </p>
           </Reveal>
 
