@@ -1,8 +1,9 @@
 # ESTADO — Reconecta AI
 Última actualización: 2026-07-12 | Sesión actual: 3
 
-✅ CHECKPOINT — Sesión 3 EN REVISIÓN FINAL: landing page 10 secciones codificada + 6 fixes aplicados (HeroReveal, useReducedMotion, §5 mockups esquemáticos, trust strip sin "4.9★", §9 badge metodológico, §6 kicker "Empieza sin riesgo") · tsc ✓ build ✓ · awaiting revisor-visual re-score
-Próximo paso EXACTO: recibir veredicto revisor-visual → si ≥36/40 Y ≥16/20 → commit+push → actualizar ESTADO.md COMPLETADA → Sesión 4 (Onboarding+Paywall+Login)
+🔧 CHECKPOINT — Sesión 3 R7 EN REVISIÓN: 4 cambios estructurales aplicados sobre R6 (§3B sección oscura, §4B milestones stepper numerado movido tras §4, trust strip dividers centrados, §6 comparador mercado Psicóloga/Curso/Reconecta) · tsc ✓ · screenshot /tmp/r7-landing.png · awaiting revisor-visual R7
+Scores previos: R5 31/40·16/20·18/20 | R6 30/40·15/20·18/20 (bajó por monotonía borderLeft en §3B/§7B/FAQ)
+Próximo paso EXACTO: recibir veredicto R7 → si ≥36/40 Y ≥16/20 Y ≥16/20 → commit+push → COMPLETADA → Sesión 4
 
 ## Qué es esta app
 Reconecta AI: plataforma de sanación emocional de la relación con el dinero usando el Método RAÍZ™, IA conversacional con memoria y contenido personalizado. Para adultos de LATAM con bloqueos económicos de origen emocional. Modelo: Onboarding-first anónimo → paywall post-diagnóstico. $7.49/mes · $59.99/año.

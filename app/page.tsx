@@ -471,10 +471,10 @@ export default function LandingPage() {
     },
   ];
 
-  const valueItems = [
-    { label: "Diagnóstico Emocional del Dinero™", value: "$97", note: "≈ 1 sesión de psicología" },
-    { label: "Chat IA con memoria completa", value: "$67", note: undefined as string | undefined },
-    { label: "Ruta personalizada + ejercicio diario", value: "$120", note: undefined as string | undefined },
+  const comparators = [
+    { label: "Psicóloga especialista en bloqueos", price: "$80", per: "/ sesión", note: "Cara y lenta — meses de espera", highlight: false },
+    { label: "Curso de finanzas emocionales", price: "$297", per: "pago único", note: "No te conoce ni recuerda tu historia", highlight: false },
+    { label: "Reconecta AI", price: "$4.99", per: "/ mes", note: "IA que aprende tu historia + ruta personalizada", highlight: true },
   ];
 
   const faqs = [
@@ -601,27 +601,21 @@ export default function LandingPage() {
 
           {/* FIX 4 (trust strip): sin "4.9★" — copy verificable */}
           <HeroReveal delay={0.22}>
-            <div className="mt-10 flex items-start justify-center">
-              {[
-                { n: "Solo", label: "en español" },
-                { n: "7 días", label: "gratis" },
-                { n: "14 días", label: "garantía" },
-              ].map((item, i) => (
-                <div
-                  key={item.n}
-                  className="flex flex-col items-center gap-0.5 px-5"
-                  style={{
-                    borderLeft: i > 0 ? "1px solid var(--border-subtle)" : "none",
-                  }}
-                >
-                  <span className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
-                    {item.n}
-                  </span>
-                  <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-                    {item.label}
-                  </span>
-                </div>
-              ))}
+            <div className="mt-10 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-0.5 px-5">
+                <span className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>Solo</span>
+                <span className="text-xs" style={{ color: "var(--text-muted)" }}>en español</span>
+              </div>
+              <div style={{ width: "1px", height: "24px", background: "var(--border-subtle)", flexShrink: 0 }} />
+              <div className="flex flex-col items-center gap-0.5 px-5">
+                <span className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>7 días</span>
+                <span className="text-xs" style={{ color: "var(--text-muted)" }}>gratis</span>
+              </div>
+              <div style={{ width: "1px", height: "24px", background: "var(--border-subtle)", flexShrink: 0 }} />
+              <div className="flex flex-col items-center gap-0.5 px-5">
+                <span className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>14 días</span>
+                <span className="text-xs" style={{ color: "var(--text-muted)" }}>garantía</span>
+              </div>
             </div>
           </HeroReveal>
         </div>
@@ -758,50 +752,60 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────── */}
       {/* §3B PRUEBA SOCIAL — BETA                           */}
       {/* ──────────────────────────────────────────────────── */}
-      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
-        <div className="mx-auto max-w-sm">
+      <section className="relative overflow-hidden px-4 py-16" style={{ background: "var(--text-primary)" }}>
+        <Blob color="gold" style={{ right: "-15%", top: "-20%", width: "280px", height: "280px", opacity: 0.18 }} />
+        <div className="relative mx-auto max-w-sm">
           <Reveal>
-            <Kicker>Acceso anticipado · Beta</Kicker>
+            <span
+              className="inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-widest"
+              style={{
+                background: "color-mix(in oklab, var(--brand-gold) 15%, transparent)",
+                borderColor: "color-mix(in oklab, var(--brand-gold) 30%, transparent)",
+                color: "var(--brand-gold)",
+                fontFamily: "var(--font-body)",
+              }}
+            >
+              Acceso anticipado · Beta
+            </span>
           </Reveal>
           <Reveal delay={0.05}>
             <h2
               className="mt-4 font-display text-2xl font-bold leading-snug"
-              style={{ color: "var(--text-primary)" }}
+              style={{ color: "var(--surface-base)" }}
             >
               Lo que las primeras usuarias descubrieron
             </h2>
           </Reveal>
 
-          <div className="mt-8 flex flex-col gap-4">
+          <div className="mt-8 flex flex-col gap-5">
             {betaTestimonials.map((t, i) => (
               <Reveal key={i} delay={i * 0.07}>
                 <div
                   className="rounded-[var(--radius-md)] p-5"
                   style={{
-                    background: "var(--surface-base)",
-                    boxShadow: "var(--shadow-sm)",
-                    borderLeft: "3px solid var(--brand-primary)",
+                    background: "color-mix(in oklab, var(--surface-base) 8%, transparent)",
+                    border: "1px solid color-mix(in oklab, var(--surface-base) 14%, transparent)",
                   }}
                 >
                   <p
-                    className="text-sm leading-relaxed"
-                    style={{ color: "var(--text-secondary)", fontStyle: "italic" }}
+                    className="font-display text-base leading-relaxed"
+                    style={{ color: "color-mix(in oklab, var(--surface-base) 88%, transparent)", fontStyle: "italic" }}
                   >
                     "{t.quote}"
                   </p>
-                  <div className="mt-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="flex size-7 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold"
-                        style={{ background: "color-mix(in oklab, var(--brand-primary) 12%, transparent)", color: "var(--brand-primary)" }}
-                      >
-                        {t.initials[0]}
-                      </div>
-                      <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
-                        {t.initials} · {t.city}
-                      </p>
+                  <div className="mt-4 flex items-center gap-2">
+                    <div
+                      className="flex size-7 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold"
+                      style={{
+                        background: "color-mix(in oklab, var(--brand-primary) 28%, transparent)",
+                        color: "var(--brand-primary-light)",
+                      }}
+                    >
+                      {t.initials[0]}
                     </div>
-                    <span className="text-xs" style={{ color: "var(--text-muted)" }}>Acceso anticipado</span>
+                    <p className="text-xs font-semibold" style={{ color: "color-mix(in oklab, var(--surface-base) 55%, transparent)" }}>
+                      {t.initials} · {t.city} · Acceso anticipado
+                    </p>
                   </div>
                 </div>
               </Reveal>
@@ -865,6 +869,62 @@ export default function LandingPage() {
                     </h3>
                     <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                       {step.desc}
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────── */}
+      {/* §4B HITOS DEL PROCESO                             */}
+      {/* ──────────────────────────────────────────────────── */}
+      <section className="px-4 py-16">
+        <div className="mx-auto max-w-sm">
+          <Reveal>
+            <Kicker>Lo que sentirás en los primeros días</Kicker>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2
+              className="mt-4 font-display text-2xl font-bold leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
+              El camino que la mayoría no esperaba recorrer
+            </h2>
+          </Reveal>
+
+          <div className="mt-8 flex flex-col">
+            {milestones.map((m, i) => (
+              <Reveal key={i} delay={i * 0.07}>
+                <div className="flex gap-4">
+                  <div className="flex shrink-0 flex-col items-center">
+                    <div
+                      className="flex size-10 items-center justify-center rounded-full font-display text-sm font-bold"
+                      style={{
+                        background: "color-mix(in oklab, var(--brand-primary) 14%, transparent)",
+                        color: "var(--brand-primary)",
+                      }}
+                    >
+                      {i + 1}
+                    </div>
+                    {i < milestones.length - 1 && (
+                      <div
+                        className="my-1 w-px flex-1"
+                        style={{ minHeight: "28px", background: "color-mix(in oklab, var(--brand-primary) 18%, transparent)" }}
+                      />
+                    )}
+                  </div>
+                  <div className="pb-6 pt-1">
+                    <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--brand-primary)" }}>
+                      {m.day}
+                    </span>
+                    <p className="mt-0.5 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                      {m.label}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                      {m.desc}
                     </p>
                   </div>
                 </div>
@@ -996,49 +1056,41 @@ export default function LandingPage() {
             </h2>
           </Reveal>
 
-          {/* Value stack */}
+          {/* Comparador de alternativas reales */}
           <Reveal delay={0.08}>
-            <div className="mt-6 rounded-[var(--radius-md)] p-5" style={{ background: "var(--surface-sunken)" }}>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
-                Valor incluido
+            <div className="mt-6 flex flex-col gap-2">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                Compara tus opciones
               </p>
-              {valueItems.map((item, i) => (
+              {comparators.map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between py-2"
+                  className="flex items-center justify-between rounded-[var(--radius-md)] p-4"
                   style={{
-                    borderBottom:
-                      i < valueItems.length - 1
-                        ? "1px solid color-mix(in oklab, var(--text-muted) 18%, transparent)"
-                        : "none",
+                    background: item.highlight
+                      ? "color-mix(in oklab, var(--brand-primary) 8%, var(--surface-elevated))"
+                      : "var(--surface-sunken)",
+                    border: item.highlight
+                      ? "1.5px solid color-mix(in oklab, var(--brand-primary) 30%, transparent)"
+                      : "1.5px solid transparent",
                   }}
                 >
-                  <div className="flex flex-col">
-                    <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold" style={{ color: item.highlight ? "var(--brand-primary)" : "var(--text-secondary)" }}>
                       {item.label}
-                    </span>
-                    {item.note && (
-                      <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-                        {item.note}
-                      </span>
-                    )}
+                    </p>
+                    <p className="mt-0.5 text-xs" style={{ color: "var(--text-muted)" }}>
+                      {item.note}
+                    </p>
                   </div>
-                  <span className="ml-4 shrink-0 text-sm font-semibold line-through" style={{ color: "var(--text-muted)" }}>
-                    {item.value}
-                  </span>
+                  <div className="ml-4 shrink-0 text-right">
+                    <span className="font-display text-lg font-bold" style={{ color: item.highlight ? "var(--brand-primary)" : "var(--text-muted)" }}>
+                      {item.price}
+                    </span>
+                    <p className="text-xs" style={{ color: "var(--text-muted)" }}>{item.per}</p>
+                  </div>
                 </div>
               ))}
-              <div
-                className="mt-1 flex items-center justify-between border-t pt-3"
-                style={{ borderColor: "color-mix(in oklab, var(--text-muted) 18%, transparent)" }}
-              >
-                <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                  Valor total
-                </span>
-                <span className="font-display text-lg font-bold line-through" style={{ color: "var(--text-muted)" }}>
-                  $284
-                </span>
-              </div>
             </div>
           </Reveal>
 
@@ -1156,7 +1208,7 @@ export default function LandingPage() {
       {/* ──────────────────────────────────────────────────── */}
       {/* §7  GARANTÍA                                       */}
       {/* ──────────────────────────────────────────────────── */}
-      <section className="px-4 py-16">
+      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
         <div className="mx-auto max-w-sm">
           <Reveal>
             <div
@@ -1203,59 +1255,6 @@ export default function LandingPage() {
               </p>
             </div>
           </Reveal>
-        </div>
-      </section>
-
-      {/* ──────────────────────────────────────────────────── */}
-      {/* §7B HITOS DEL PROCESO                             */}
-      {/* ──────────────────────────────────────────────────── */}
-      <section className="px-4 py-16" style={{ background: "var(--surface-elevated)" }}>
-        <div className="mx-auto max-w-sm">
-          <Reveal>
-            <Kicker>Lo que sentirás en los primeros días</Kicker>
-          </Reveal>
-          <Reveal delay={0.05}>
-            <h2
-              className="mt-4 font-display text-2xl font-bold leading-snug"
-              style={{ color: "var(--text-primary)" }}
-            >
-              El camino que la mayoría no esperaba recorrer
-            </h2>
-          </Reveal>
-
-          <div className="mt-8 flex flex-col gap-4">
-            {milestones.map((m, i) => (
-              <Reveal key={i} delay={i * 0.07}>
-                <div
-                  className="rounded-[var(--radius-md)] p-5"
-                  style={{
-                    background: "var(--surface-base)",
-                    boxShadow: "var(--shadow-sm)",
-                    borderLeft: "3px solid var(--brand-primary)",
-                  }}
-                >
-                  <span
-                    className="text-xs font-semibold uppercase tracking-widest"
-                    style={{ color: "var(--brand-primary)" }}
-                  >
-                    {m.day}
-                  </span>
-                  <p
-                    className="mt-1 text-sm font-semibold"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    {m.label}
-                  </p>
-                  <p
-                    className="mt-2 text-sm leading-relaxed"
-                    style={{ color: "var(--text-secondary)" }}
-                  >
-                    {m.desc}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 
