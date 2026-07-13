@@ -140,9 +140,13 @@ export default function PaywallPage() {
     month: "long",
   });
 
-  function handleCTA() {
+  async function handleCTA() {
     setIsPending(true);
-    router.push("/login");
+    try {
+      await router.push("/login");
+    } catch {
+      setIsPending(false);
+    }
   }
 
   const FEATURES = [
@@ -199,16 +203,22 @@ export default function PaywallPage() {
               {heridaData.icon}
             </div>
 
-            <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+            <div
+              className="inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-widest"
+              style={{ background: "var(--surface-sunken)", color: "var(--text-muted)" }}
+            >
               Tu diagnóstico está listo
-            </p>
+            </div>
             <h1
-              className="mt-2 font-display text-4xl font-bold leading-tight"
+              className="mt-3 font-display text-4xl font-bold leading-tight"
               style={{ color: "var(--text-primary)" }}
             >
               {name ? `${name}, identificamos tu` : "Identificamos tu"}{" "}
               <span style={{ color: heridaData.color }}>{heridaData.title}</span>
             </h1>
+            <p className="mt-2 text-sm leading-snug" style={{ color: "var(--text-muted)" }}>
+              ¿Otra vez el dinero se fue antes de que pudieras ver por qué?
+            </p>
             <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
               Tu ruta de 90 días está lista. Desbloquéala con 7 días gratis — sin tarjeta hoy.
             </p>
@@ -232,7 +242,7 @@ export default function PaywallPage() {
                 borderBottom: `1px solid color-mix(in oklab, ${heridaData.color} 15%, transparent)`,
               }}
             >
-              <p className="text-xs font-semibold" style={{ color: heridaData.color }}>
+              <p className="text-base font-semibold" style={{ color: heridaData.color }}>
                 Tu ruta personalizada — Semana 1
               </p>
             </div>
@@ -269,7 +279,7 @@ export default function PaywallPage() {
             {FEATURES.map((f, i) => (
               <div key={i} className="flex items-center gap-3">
                 <span
-                  className="flex size-9 shrink-0 items-center justify-center rounded-xl"
+                  className="flex size-9 shrink-0 items-center justify-center rounded-[var(--radius-sm)]"
                   style={{
                     background: "var(--soft3d-bg)",
                     boxShadow: "var(--soft3d-shadow)",
@@ -344,7 +354,7 @@ export default function PaywallPage() {
                 <button
                   key={plan}
                   onClick={() => setBilling(plan)}
-                  className="relative flex-1 rounded-[12px] py-2.5 text-sm font-medium"
+                  className="relative flex-1 rounded-[var(--radius-sm)] py-2.5 text-sm font-medium"
                   style={{
                     color: billing === plan ? "var(--text-primary)" : "var(--text-muted)",
                     transition: "color 200ms",
@@ -353,7 +363,7 @@ export default function PaywallPage() {
                   {billing === plan && (
                     <motion.span
                       layoutId="billing-pill"
-                      className="absolute inset-0 rounded-[12px]"
+                      className="absolute inset-0 rounded-[var(--radius-sm)]"
                       style={{ background: "var(--surface-elevated)", boxShadow: "var(--shadow-sm)" }}
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />

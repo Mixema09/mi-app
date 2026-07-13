@@ -10,6 +10,7 @@ type LoginMode = "create" | "login";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
+  const [emailTouched, setEmailTouched] = useState(false);
   const [mode, setMode] = useState<Mode>("idle");
   const [loginMode, setLoginMode] = useState<LoginMode>("create");
   const prefersReduced = useReducedMotion();
@@ -72,32 +73,38 @@ export default function LoginPage() {
         <div className="blob-hero" />
         <div className="mx-auto w-full max-w-sm">
 
-          {/* Heading — con transición al cambiar modo */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={loginMode}
-              initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : -8 }}
-              transition={{ duration: 0.25, ease }}
-            >
-              <h1
-                className="font-display text-3xl font-bold leading-tight"
-                style={{ color: "var(--text-primary)" }}
+          {/* Heading — stagger bloque 1 */}
+          <motion.div
+            initial={{ y: prefersReduced ? 0 : 12, opacity: prefersReduced ? 1 : 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: dur, ease }}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={loginMode}
+                initial={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: prefersReduced ? 1 : 0, y: prefersReduced ? 0 : -8 }}
+                transition={{ duration: 0.25, ease }}
               >
-                {headings[loginMode].title}
-              </h1>
-              <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                {headings[loginMode].subtitle}
-              </p>
-            </motion.div>
-          </AnimatePresence>
+                <h1
+                  className="font-display text-3xl font-bold leading-tight"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {headings[loginMode].title}
+                </h1>
+                <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                  {headings[loginMode].subtitle}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
 
-          {/* Magic link form */}
+          {/* Magic link form — stagger bloque 2 */}
           <motion.div
             initial={{ y: prefersReduced ? 0 : 16, opacity: prefersReduced ? 1 : 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: prefersReduced ? 0 : 0.1, duration: dur, ease }}
+            transition={{ delay: prefersReduced ? 0 : 0.06, duration: dur, ease }}
             className="mt-8"
           >
             <AnimatePresence mode="wait">
@@ -136,12 +143,12 @@ export default function LoginPage() {
                   className="flex flex-col gap-3"
                 >
                   <div className="relative">
-                    <EnvelopeSimple
-                      size={18}
-                      weight="duotone"
-                      className="absolute left-4 top-1/2 -translate-y-1/2"
-                      style={{ color: "var(--text-muted)" }}
-                    />
+                    <div
+                      className="absolute left-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-[var(--radius-sm)]"
+                      style={{ background: "var(--soft3d-bg)", boxShadow: "var(--soft3d-shadow)" }}
+                    >
+                      <EnvelopeSimple size={16} weight="duotone" color="white" />
+                    </div>
                     <input
                       ref={emailRef}
                       type="email"
@@ -149,7 +156,7 @@ export default function LoginPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="tu@correo.com"
                       autoComplete="email"
-                      className="w-full rounded-[var(--radius-md)] py-4 pl-11 pr-4 text-base outline-none"
+                      className="w-full rounded-[var(--radius-md)] py-4 pl-14 pr-4 text-base outline-none"
                       style={{
                         background: "var(--surface-elevated)",
                         border: "1.5px solid var(--border-subtle)",
@@ -157,9 +164,17 @@ export default function LoginPage() {
                         caretColor: "var(--brand-primary)",
                       }}
                       onFocus={(e) => { e.target.style.borderColor = "var(--brand-primary)"; }}
-                      onBlur={(e) => { e.target.style.borderColor = "var(--border-subtle)"; }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = "var(--border-subtle)";
+                        setEmailTouched(true);
+                      }}
                     />
                   </div>
+                  {emailTouched && email && !isValidEmail(email) && (
+                    <p className="text-xs" style={{ color: "var(--semantic-error)" }}>
+                      Ingresa un correo válido (ej: tu@correo.com)
+                    </p>
+                  )}
 
                   {mode === "error" && (
                     <p className="text-xs" style={{ color: "var(--semantic-error)" }}>
@@ -174,9 +189,11 @@ export default function LoginPage() {
                     disabled={!isValidEmail(email) || mode === "sending"}
                     className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
                     style={{
-                      background: isValidEmail(email) ? "var(--brand-primary)" : "transparent",
-                      border: `1.5px solid ${isValidEmail(email) ? "transparent" : "color-mix(in oklab, var(--brand-primary) 35%, transparent)"}`,
-                      color: isValidEmail(email) ? "white" : "var(--text-muted)",
+                      background: isValidEmail(email)
+                        ? "var(--brand-primary)"
+                        : "color-mix(in oklab, var(--brand-primary) 35%, transparent)",
+                      border: "1.5px solid transparent",
+                      color: "white",
                       boxShadow: isValidEmail(email) ? "0 4px 18px rgba(224,123,64,0.28)" : "none",
                       transition: "all 200ms",
                     }}
@@ -204,57 +221,71 @@ export default function LoginPage() {
             </AnimatePresence>
           </motion.div>
 
-          {/* Divider */}
+          {/* Divider — stagger bloque 3 */}
           {mode !== "sent" && (
-            <div className="my-6 flex items-center gap-3">
+            <motion.div
+              initial={{ opacity: prefersReduced ? 1 : 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: prefersReduced ? 0 : 0.12, duration: dur, ease }}
+              className="my-6 flex items-center gap-3"
+            >
               <div className="flex-1" style={{ height: "1px", background: "var(--border-subtle)" }} />
               <span className="text-xs" style={{ color: "var(--text-muted)" }}>o continúa con</span>
               <div className="flex-1" style={{ height: "1px", background: "var(--border-subtle)" }} />
-            </div>
+            </motion.div>
           )}
 
-          {/* Google — siempre visible y habilitado (OAuth independiente del email) */}
+          {/* Google — stagger bloque 4, siempre habilitado */}
           {mode !== "sent" && (
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 80, damping: 18 }}
-              onClick={handleGoogle}
-              disabled={mode === "sending"}
-              className="flex w-full items-center justify-center gap-3 rounded-[var(--radius-md)] py-4 text-base font-medium"
-              style={{
-                background: "var(--surface-elevated)",
-                border: "1.5px solid var(--border-subtle)",
-                color: "var(--text-primary)",
-                boxShadow: "var(--shadow-sm)",
-              }}
+            <motion.div
+              initial={{ y: prefersReduced ? 0 : 12, opacity: prefersReduced ? 1 : 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: prefersReduced ? 0 : 0.18, duration: dur, ease }}
             >
-              <GoogleLogo size={20} weight="bold" />
-              Continuar con Google
-            </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 80, damping: 18 }}
+                onClick={handleGoogle}
+                disabled={mode === "sending"}
+                className="flex w-full items-center justify-center gap-3 rounded-[var(--radius-md)] py-4 text-base font-medium"
+                style={{
+                  background: "var(--surface-elevated)",
+                  border: "1.5px solid var(--border-subtle)",
+                  color: "var(--text-primary)",
+                  boxShadow: "var(--shadow-sm)",
+                }}
+              >
+                <GoogleLogo size={20} weight="bold" />
+                Continuar con Google
+              </motion.button>
+            </motion.div>
           )}
 
-          {/* Legal — separado en dos bloques */}
-          <p
-            className="mt-6 text-center text-xs leading-relaxed"
-            style={{ color: "var(--text-muted)" }}
+          {/* Legal + Toggle — stagger bloque 5, área sunken */}
+          <motion.div
+            initial={{ opacity: prefersReduced ? 1 : 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: prefersReduced ? 0 : 0.24, duration: dur, ease }}
+            className="mt-6 rounded-[var(--radius-md)] p-4 text-center"
+            style={{ background: "var(--surface-sunken)" }}
           >
-            Al continuar aceptas los{" "}
-            <Link href="/terminos" style={{ color: "var(--brand-primary)" }}>Términos</Link>{" "}
-            y la{" "}
-            <Link href="/privacidad" style={{ color: "var(--brand-primary)" }}>Política de privacidad</Link>.
-          </p>
-
-          {/* Toggle login/create */}
-          <p className="mt-4 text-center text-xs" style={{ color: "var(--text-muted)" }}>
-            {loginMode === "create" ? "¿Ya tienes cuenta?" : "¿Eres nueva aquí?"}{" "}
-            <button
-              onClick={() => setLoginMode((m) => (m === "create" ? "login" : "create"))}
-              className="font-medium"
-              style={{ color: "var(--brand-primary)" }}
-            >
-              {loginMode === "create" ? "Entrar" : "Crear cuenta"}
-            </button>
-          </p>
+            <p className="text-xs leading-relaxed" style={{ color: "var(--text-muted)" }}>
+              Al continuar aceptas los{" "}
+              <Link href="/terminos" style={{ color: "var(--brand-primary)" }}>Términos</Link>{" "}
+              y la{" "}
+              <Link href="/privacidad" style={{ color: "var(--brand-primary)" }}>Política de privacidad</Link>.
+            </p>
+            <p className="mt-3 text-xs" style={{ color: "var(--text-muted)" }}>
+              {loginMode === "create" ? "¿Ya tienes cuenta?" : "¿Eres nueva aquí?"}{" "}
+              <button
+                onClick={() => setLoginMode((m) => (m === "create" ? "login" : "create"))}
+                className="font-medium"
+                style={{ color: "var(--brand-primary)" }}
+              >
+                {loginMode === "create" ? "Entrar" : "Crear cuenta"}
+              </button>
+            </p>
+          </motion.div>
         </div>
       </main>
     </div>

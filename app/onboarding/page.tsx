@@ -256,7 +256,7 @@ function Chip({
     <motion.button
       whileTap={{ scale: 0.97 }}
       onClick={onSelect}
-      className="flex w-full items-center gap-3 rounded-[var(--radius-md)] px-4 py-4 text-left text-sm font-medium"
+      className="flex w-full items-center gap-3 rounded-full px-4 py-4 text-left text-sm font-medium"
       style={{
         background: selected
           ? "color-mix(in oklab, var(--brand-primary) 10%, transparent)"
@@ -310,6 +310,7 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<Answers>>({});
   const [inputValue, setInputValue] = useState("");
+  const [nameTouched, setNameTouched] = useState(false);
   const [selectedChip, setSelectedChip] = useState<string | null>(null);
   const [direction, setDirection] = useState(1);
   const [loadingPct, setLoadingPct] = useState(0);
@@ -422,7 +423,7 @@ export default function OnboardingPage() {
 
   return (
     <div
-      className="flex min-h-dvh flex-col"
+      className="flex min-h-dvh flex-col overflow-x-hidden"
       style={{ background: "var(--surface-base)", color: "var(--text-primary)" }}
     >
       {/* Header */}
@@ -469,7 +470,7 @@ export default function OnboardingPage() {
           >
             {/* ── Welcome ── */}
             {currentStep?.type === "welcome" && (
-              <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-4 py-12 text-center">
+              <div className="relative flex flex-1 flex-col items-center justify-center px-4 py-12 text-center">
                 <div className="blob-hero" />
 
                 <div
@@ -540,7 +541,7 @@ export default function OnboardingPage() {
                       whileHover={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 80, damping: 18 }}
                       onClick={goNext}
-                      className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+                      className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
                       style={{
                         background: "var(--brand-primary)",
                         color: "white",
@@ -604,9 +605,16 @@ export default function OnboardingPage() {
                       }}
                       onBlur={(e) => {
                         e.target.style.borderColor = "var(--border-subtle)";
+                        setNameTouched(true);
                       }}
                     />
                   </div>
+
+                  {nameTouched && !inputValue.trim() && (
+                    <p className="mt-2 text-xs" style={{ color: "var(--semantic-error)" }}>
+                      Escribe cómo llamarte o usa &ldquo;Prefiero no decirlo&rdquo;.
+                    </p>
+                  )}
 
                   <button
                     onClick={() => {
@@ -631,7 +639,7 @@ export default function OnboardingPage() {
                       transition={{ type: "spring", stiffness: 80, damping: 18 }}
                       onClick={handleInputContinue}
                       disabled={!inputValue.trim()}
-                      className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+                      className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
                       style={{
                         background: inputValue.trim() ? "var(--brand-primary)" : "var(--surface-sunken)",
                         color: inputValue.trim() ? "white" : "var(--text-muted)",
@@ -692,7 +700,7 @@ export default function OnboardingPage() {
                           whileTap={{ scale: 0.97 }}
                           transition={{ type: "spring", stiffness: 80, damping: 18 }}
                           onClick={goNext}
-                          className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+                          className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
                           style={{
                             background: "var(--brand-primary)",
                             color: "white",
@@ -971,7 +979,7 @@ export default function OnboardingPage() {
                       whileHover={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 80, damping: 18 }}
                       onClick={handleRevealCTA}
-                      className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-base font-semibold"
+                      className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] py-4 text-base font-semibold"
                       style={{
                         background: "var(--brand-primary)",
                         color: "white",
@@ -984,6 +992,15 @@ export default function OnboardingPage() {
                     <p className="mt-2 text-center text-xs" style={{ color: "var(--text-muted)" }}>
                       7 días gratis · Sin tarjeta hasta el día 7
                     </p>
+                    <div className="mt-4 text-center">
+                      <button
+                        onClick={goBack}
+                        className="text-xs"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        ← Volver a mis respuestas
+                      </button>
+                    </div>
                   </motion.div>
                 </div>
               </div>
